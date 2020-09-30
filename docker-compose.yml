@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  ui:
+    build: ./ui
+    stdin_open: true
+    volumes:
+      - "./ui:/var/ui"
+      - "/var/ui/node_modules"
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+  user:
+    build: "./services/user-service"
+    volumes:
+      - "./services/user-service:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    ports:
+      - "8000:8080"
+    expose:
+      - 8000
+    depends_on:
+      - redis
+      - db
+  item:
+    build: "./services/item-service"
+    volumes:
+      - "./services/item-service:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    ports:
+      - "8001:8080"
+    depends_on:
+      - redis
+      - db
+      - user
+  auction:
+    build: "./services/auction-service"
+    volumes:
+      - "./services/auction-service:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    ports:
+      - "8002:8080"
+    depends_on:
+      - redis
+      - db
+      - user
+  redis:
+    image: redis
+    ports:
+      - 6379
+    expose:
+      - 6379
+  # localstack:
+  #   container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+  #   image: localstack/localstack
+  #   ports:
+  #     - "4566-4599:4566-4599"
+  #     - "9090:8080"
+  #   environment:
+  #     - SERVICES=sqs
+  #     - DATA_DIR=/tmp/localstack/data
+  #     - PORT_WEB_UI=9090
+  #     - DOCKER_HOST=unix:///var/run/docker.sock
+  #     - HOST_TMP_FOLDER=${TMPDIR}
+  #   volumes:
+  #     - "/Users/michaelhaberman/data/localstack:/tmp/localstack"
+  #     - "/var/run/docker.sock:/var/run/docker.sock"

@@ -1,0 +1,11 @@
+FROM node
+WORKDIR /var/ui
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn
+COPY . ./
+
+CMD ["yarn", "start"]

@@ -1,0 +1,11 @@
+{
+  "name": "aspecto-demo-services",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Michael Haberman <michael@aspecto.io>",
+  "license": "MIT",
+  "scripts": {
+    "start": "docker-compose down && docker-compose up -d && docker-compose logs -f",
+    "build": "docker-compose down && docker-compose up -d --build && docker-compose logs -f"
+  }
+}
