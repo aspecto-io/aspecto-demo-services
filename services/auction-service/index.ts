@@ -2,7 +2,6 @@ import init from "@aspecto/opentelemetry";
 init({
     local: true,
     logger: console,
-    aspectoAuth: '8b04271f-ca7c-470a-b0fd-b7fa4f012240'
 })
 
 import express from "express";
@@ -11,6 +10,7 @@ import bodyParser from "body-parser";
 import axios from "axios";
 import Redis from "ioredis";
 import { SQS } from "aws-sdk";
+import { URL } from "url";
 
 let items: [];
 const redis = getRedisConn();
@@ -83,9 +83,21 @@ async function syncItems() {
 (async () => {
     try {
         const sqs = new SQS({
-            endpoint: 'http://localhost:4566'
+            endpoint: 'http://localstack:4566',
+            region: 'us-east-1', // the default region for localstack
         });
-        sqs.createQueue({ QueueName: 'items-changes-stream' });
+        const res = await sqs.createQueue({ QueueName: 'items-changes-stream' }).promise();
+        const url = new URL(res.QueueUrl);
+        url.hostname = 'localstack';
+        const QueueUrl = url.toString();
+        await sqs.sendMessage({
+            QueueUrl,
+            MessageBody: 'test',
+        }).promise();
+        const read = await sqs.receiveMessage({
+            QueueUrl,
+        }).promise();
+        console.log(read);
     } catch (e) {
         console.error("While creating sqs" + e, e)
     }

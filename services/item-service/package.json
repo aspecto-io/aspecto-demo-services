@@ -7,7 +7,7 @@
     "start": "ts-node-dev ./index.ts"
   },
   "dependencies": {
-    "@aspecto/opentelemetry": "^0.0.56",
+    "@aspecto/opentelemetry": "^0.0.65",
     "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.7",

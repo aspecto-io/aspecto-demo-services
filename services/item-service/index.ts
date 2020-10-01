@@ -2,7 +2,6 @@ import init from "@aspecto/opentelemetry";
 init({
     local: true,
     logger: console,
-    aspectoAuth: '8b04271f-ca7c-470a-b0fd-b7fa4f012240'
 })
 
 import mongoose from "mongoose";
@@ -104,4 +103,3 @@ async function getDBModel() {
 
     return Item;
 }
-
