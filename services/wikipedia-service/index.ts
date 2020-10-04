@@ -7,12 +7,15 @@ import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
 import express from 'express';
 import axios from 'axios';
+import Redis from 'ioredis';
 
 const queueUrl = "http://localstack:4566/000000000000/new-wiki-article";
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
   region: "us-east-1", // the default region for localstack
 });
+
+const redis = new Redis('redis');
 
 const articleSchema = new mongoose.Schema({
     title: { type: String }
@@ -101,14 +104,23 @@ articlesRouter.get('/', async (req, res) => {
 });
 
 articlesRouter.get('/:id', async (req, res) => {
+    const articleId = req.params.id;
     try {
-        const article = await ArticleModel.findOne({_id: req.params.id});
+        const cachedValue = await redis.get(articleId);
+        if(cachedValue) {
+            res.send(cachedValue);
+            return;
+        }
+
+        const article = await ArticleModel.findOne({_id: articleId});
         if(!article)
             res.sendStatus(404);
-        else
+        else {
+            redis.set(article._id, JSON.stringify(article));
             res.json(article);
+        }
     } catch(e) {
-        console.log('failed to get article', {articleId: req.params.id}, e);
+        console.log('failed to get article', {articleId: articleId}, e);
         res.sendStatus(500);
     }
 });

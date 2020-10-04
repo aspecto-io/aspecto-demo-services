@@ -22,7 +22,7 @@ const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 5;
 
 // how many milliseconds to wait between each batch query on wikipedia api.
 const waitBetweenBatches: number =
-  +process.env.WIKI_SCRAPER_WAIT_BETWEEN_BATCHES_MS || 15000;
+  +process.env.WIKI_SCRAPER_WAIT_BETWEEN_BATCHES_MS || 60000;
 
 const pollWikipediaArticles = async (offset: number): Promise<number> => {
   try {
