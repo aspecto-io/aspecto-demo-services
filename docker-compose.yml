@@ -1,22 +1,25 @@
 version: "3.8"
 
 services:
-  ui:
-    build: ./ui
-    stdin_open: true
-    volumes:
-      - "./ui:/var/ui"
-      - "/var/ui/node_modules"
-    ports:
-      - "3000:3000"
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+
+  # ui:
+  #   build: ./ui
+  #   stdin_open: true
+  #   volumes:
+  #     - "./ui:/var/ui"
+  #     - "/var/ui/node_modules"
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+
   db:
     image: mongo
     ports:
       - "27017:27017"
     expose:
       - "27017"
+
   user:
     build: "./services/user-service"
     volumes:
@@ -30,65 +33,86 @@ services:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
     depends_on:
-      - redis
       - db
-  item:
-    build: "./services/item-service"
+
+  # item:
+  #   build: "./services/item-service"
+  #   volumes:
+  #     - "./services/item-service:/usr/src/app"
+  #     - "/usr/src/app/node_modules"
+  #   ports:
+  #     - "8001:8080"
+  #   environment:
+  #     - ASPECTO_AUTH
+  #     - ASPECTO_GITHASH
+  #   depends_on:
+  #     - redis
+  #     - db
+  #     - user
+
+  # auction:
+  #   build: "./services/auction-service"
+  #   volumes:
+  #     - "./services/auction-service:/usr/src/app"
+  #     - "/usr/src/app/node_modules"
+  #   ports:
+  #     - "8002:8080"
+  #   environment:
+  #     - ASPECTO_AUTH
+  #     - ASPECTO_GITHASH
+  #     - AWS_ACCESS_KEY_ID=foobar
+  #     - AWS_SECRET_ACCESS_KEY=foobar
+  #     - AWS_DEFAULT_REGION=us-east-1 # default region for localstack
+  #   depends_on:
+  #     - redis
+  #     - db
+  #     - user
+  #     - localstack 
+
+  wikipedia-scraper:
+    build: "./services/wikipedia-scraper"
     volumes:
-      - "./services/item-service:/usr/src/app"
+      - "./services/wikipedia-scraper:/usr/src/app"
       - "/usr/src/app/node_modules"
-    ports:
-      - "8001:8080"
-    environment:
-      - ASPECTO_AUTH
-      - ASPECTO_GITHASH
-    depends_on:
-      - redis
-      - db
-      - user
-  auction:
-    build: "./services/auction-service"
-    volumes:
-      - "./services/auction-service:/usr/src/app"
-      - "/usr/src/app/node_modules"
-    ports:
-      - "8002:8080"
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
-      - AWS_DEFAULT_REGION=us-east-1 # default region for localstack
     depends_on:
-      - redis
-      - db
-      - user
+      - localstack 
+
+  wikipedia-service:
+    build: "./services/wikipedia-service"
+    volumes:
+      - "./services/wikipedia-service:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    ports:
+      - "8003:8080"
+    environment:
+      - ASPECTO_AUTH
+      - ASPECTO_GITHASH
+      - AWS_ACCESS_KEY_ID=foobar
+      - AWS_SECRET_ACCESS_KEY=foobar
+    depends_on:
+      - localstack 
+
+
   redis:
     image: redis
     ports:
       - 6379
     expose:
       - 6379
+
   localstack:
     image: localstack/localstack
     ports:
       - "4566:4566"
       - "4571:4571"
+    volumes:
+      - ./scripts:/docker-entrypoint-initaws.d
     environment: 
       - SERVICES=sqs
+      - HOSTNAME_EXTERNAL=localstack
     
-  # localstack:
-  #   container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
-  #   image: localstack/localstack
-  #   ports:
-  #     - "4566-4599:4566-4599"
-  #     - "9090:8080"
-  #   environment:
-  #     - SERVICES=sqs
-  #     - DATA_DIR=/tmp/localstack/data
-  #     - PORT_WEB_UI=9090
-  #     - DOCKER_HOST=unix:///var/run/docker.sock
-  #     - HOST_TMP_FOLDER=${TMPDIR}
-  #   volumes:
-  #     - "/Users/michaelhaberman/data/localstack:/tmp/localstack"
-  #     - "/var/run/docker.sock:/var/run/docker.sock"

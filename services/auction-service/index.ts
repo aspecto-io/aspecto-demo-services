@@ -90,14 +90,6 @@ async function syncItems() {
         const url = new URL(res.QueueUrl);
         url.hostname = 'localstack';
         const QueueUrl = url.toString();
-        await sqs.sendMessage({
-            QueueUrl,
-            MessageBody: 'test',
-        }).promise();
-        const read = await sqs.receiveMessage({
-            QueueUrl,
-        }).promise();
-        console.log(read);
     } catch (e) {
         console.error("While creating sqs" + e, e)
     }

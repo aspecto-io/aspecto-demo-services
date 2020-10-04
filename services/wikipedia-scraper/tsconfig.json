@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES2017",
-        "lib": ["ES2017"],
+        "lib": ["ES2017", "DOM"],
         "rootDir": "src",
         "outDir": "dist",
         "module": "commonjs",

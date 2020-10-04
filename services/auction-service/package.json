@@ -8,8 +8,6 @@
   },
   "dependencies": {
     "@aspecto/opentelemetry": "^0.0.65",
-    "@opentelemetry/plugin-ioredis": "^0.10.0",
-    "@types/aws-sdk": "^2.7.0",
     "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.7",
