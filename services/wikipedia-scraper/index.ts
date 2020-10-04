@@ -6,11 +6,19 @@ init({
 import axios from "axios";
 import { SQS } from "aws-sdk";
 
-const queueUrl = 'http://localstack:4566/000000000000/new-wiki-article';
+let queueUrl;
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
   region: "us-east-1", // the default region for localstack
 });
+
+const initSqs = async () => {
+  const res = await sqs.createQueue({
+    QueueName: 'new-wiki-article'
+  }).promise();
+  queueUrl = res.QueueUrl;
+  console.log("sqs send queue ready", { queueUrl });
+}
 
 // set the search term which is going to be scraped from wikipedia
 // the default (if not set as env variable) is to search articles
@@ -55,5 +63,12 @@ const pollWikipediaArticles = async (offset: number): Promise<number> => {
   }
 };
 
-pollWikipediaArticles(0);
-console.log("wikipedia scraper started");
+(async () => {
+  try {
+    await initSqs();
+    pollWikipediaArticles(0);
+    console.log("wikipedia scraper started");
+  } catch(e) {
+    console.log('failed to init service', e);
+  }
+})();
