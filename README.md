@@ -7,10 +7,10 @@
 ```
 ASPECTO_AUTH={YOUR_ASPECTO_TOKEN} ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
 ```
-
+This command might take few minutes on first run.
 Docker compose will pull and build any missing images, run the services, and output logs to the console. 
 
-4. Search the logs for a message with link to live flows; There are multiple links, one for each serivce. You can click any of them. The links looks like this:
+4. Search the logs for a message with link to live flows; There are multiple links, one for each service. You can click any of them. The links looks like this:
 
 ```
 wikipedia-service_1  | ====================================================================================================================================
