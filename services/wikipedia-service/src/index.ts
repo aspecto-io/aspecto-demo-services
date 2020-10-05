@@ -124,7 +124,7 @@ articlesRouter.get("/:id", async (req, res) => {
   }
 });
 
-app.use("/articles", articlesRouter);
+app.use("/article", articlesRouter);
 
 const initSqs = async () => {
   const res = await sqs

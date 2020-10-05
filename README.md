@@ -1,11 +1,16 @@
 # Aspecto-Demo-Services
 
 ## How to run
+1. `git clone` the project locally
+2. Copy your aspecto token from [aspecto website](https://app.aspecto.io/app/integration/api-key).
+3. Run the following command in terminal, replace `YOUR_ASPECTO_TOKEN` with the token you copied.
 ```
 ASPECTO_AUTH={YOUR_ASPECTO_TOKEN} ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
 ```
 
-Docker compose will pull and build any missing images, run the services, and output logs to the console. Find in logs a message with link to live flows; It looks like this: (the link will show up for each service, you should click one, no matter which)
+Docker compose will pull and build any missing images, run the services, and output logs to the console. 
+
+4. Search the logs for a message with link to live flows; There are multiple links, one for each serivce. You can click any of them. The links looks like this:
 
 ```
 wikipedia-service_1  | ====================================================================================================================================
@@ -14,4 +19,4 @@ wikipedia-service_1  | | 🕵️‍♀️ See the live tracing stream at https:/
 wikipedia-service_1  | |                                                                                                                                  |
 wikipedia-service_1  | ====================================================================================================================================
 ```
-Click the link, and it will take you to live-flows page in aspecto website, where you should see the live traces being created.
+5. Open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests. Examine the live traces in aspecto website.

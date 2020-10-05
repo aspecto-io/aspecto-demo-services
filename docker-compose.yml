@@ -27,7 +27,7 @@ services:
     ports:
       - "8000:8080"
     expose:
-      - 8000
+      - 8080
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
@@ -78,7 +78,7 @@ services:
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     ports:
-      - "8004:8080"
+      - "8001:8080"
     depends_on:
       - localstack 
 
@@ -87,7 +87,7 @@ services:
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     ports:
-      - "8003:8080"
+      - "8002:8080"
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH

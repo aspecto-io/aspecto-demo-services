@@ -1,0 +1,321 @@
+{
+	"info": {
+		"_postman_id": "23b9f408-fd32-4020-bff2-2c96f2c29d91",
+		"name": "aspecto-demo-services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "poll single batch from wikipedia for articles with text 'nodejs'",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/poll/nodejs?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"poll",
+						"nodejs"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "another batch poll for wikipedia articles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/poll/nodejs?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"poll",
+						"nodejs"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query wikipedia service for all articles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ccada6fa-a0c6-432d-8499-e92bace8c72b",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query for single article by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3a371aa8-43ac-4892-98b8-741a00e255b6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/{{article_id_1}}?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"{{article_id_1}}"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query again for the previous article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b93fbca8-e8a8-459a-b07a-e048bfc6a3a6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/{{article_id_1}}?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"{{article_id_1}}"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query for another article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8ae703c1-af93-41e4-adf2-3ff0c29c04c1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/{{article_id_2}}?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"{{article_id_2}}"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query for a non exisiting article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a15c1972-2f30-454f-9269-7000ac0dcabf",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/000000000000000000000000?token=123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"000000000000000000000000"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query without authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f33cdcea-2c5d-4bb3-abcf-7175e9e496aa",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/000000000000000000000000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"000000000000000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query with invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "23303aa4-b060-40c6-a8f2-995ac4f67cc9",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8002/article/000000000000000000000000?token=notvalid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"article",
+						"000000000000000000000000"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "notvalid"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
