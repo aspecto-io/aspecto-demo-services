@@ -77,6 +77,8 @@ services:
       - ASPECTO_GITHASH
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+    ports:
+      - "8004:8080"
     depends_on:
       - localstack 
 
