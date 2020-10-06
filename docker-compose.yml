@@ -15,8 +15,6 @@ services:
 
   db:
     image: mongo
-    ports:
-      - "27017:27017"
     expose:
       - "27017"
 
@@ -68,7 +66,7 @@ services:
   #     - user
   #     - localstack 
 
-  wikipedia-scraper:
+  scraper:
     build: "./services/wikipedia-scraper"
     volumes:
       - "./services/wikipedia-scraper/src:/usr/src/app/src"

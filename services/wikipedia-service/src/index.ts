@@ -35,7 +35,7 @@ const handleSqsBatch = async () => {
 
   // process messages
   res.Messages.forEach((m) => {
-    console.log(m.Body);
+    console.log('processing new article from sqs', {title: m.Body});
     const article = new ArticleModel({
       title: m.Body,
     });
@@ -59,7 +59,7 @@ const sqsProcessingLoop = async () => {
     try {
       await handleSqsBatch();
     } catch (e) {
-      console.log(
+      console.warn(
         "failed to process message from sqs, will try again in 2 seconds",
         e
       );
@@ -83,6 +83,7 @@ app.use(async (req, res, next) => {
         res.sendStatus(401);
       }
     } else {
+      console.info('token missing in query string for incoming http request', req.path);
       res.sendStatus(401);
     }
   } catch (e) {
@@ -95,10 +96,14 @@ const articlesRouter = express.Router();
 
 articlesRouter.get("/", async (req, res) => {
   try {
-    const allArticles = await ArticleModel.find({});
-    res.json(allArticles);
+    console.log('querying db for all article ids');
+    const allArticlesIds = await ArticleModel.aggregate([
+      { $project: { id: 1}}
+    ]);
+    console.log(`Returning ids of all ${allArticlesIds.length} articles in db`);
+    res.json(allArticlesIds);
   } catch (e) {
-    console.log("failed to get all articles", e);
+    console.error("Failed to get all article ids", e);
     res.status(500);
   }
 });
@@ -106,20 +111,24 @@ articlesRouter.get("/", async (req, res) => {
 articlesRouter.get("/:id", async (req, res) => {
   const articleId = req.params.id;
   try {
+    console.log('get request for article', {articleId});
     const cachedValue = await redis.get(articleId);
     if (cachedValue) {
+      console.log('returning article info from redis cache', {articleId});
       res.send(cachedValue);
       return;
     }
 
+    console.log('article not found in cache, querying in mongodb', {articleId});
     const article = await ArticleModel.findOne({ _id: articleId });
     if (!article) res.sendStatus(404);
     else {
+      console.log('article found in mongodb. storing it in redis');
       redis.set(article._id, JSON.stringify(article));
       res.json(article);
     }
   } catch (e) {
-    console.log("failed to get article", { articleId: articleId }, e);
+    console.error("failed to get article", { articleId: articleId }, e);
     res.sendStatus(500);
   }
 });
