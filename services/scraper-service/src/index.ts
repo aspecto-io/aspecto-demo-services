@@ -14,17 +14,27 @@ const sqs = new SQS({
 });
 
 const initSqs = async () => {
-  const res = await sqs.createQueue({
-    QueueName: 'new-wiki-article'
-  }).promise();
+  const res = await sqs
+    .createQueue({
+      QueueName: "new-wiki-article",
+    })
+    .promise();
   queueUrl = res.QueueUrl;
   console.log("sqs send queue ready", { queueUrl });
-}
+};
 
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 4;
 
-const pollWikipediaArticles = async (offset: number, searchTerm: string): Promise<number> => {
+const pollWikipediaArticles = async (
+  offset: number,
+  searchTerm: string
+): Promise<number> => {
+  console.log("sending search query to wikipedia", {
+    searchTerm,
+    offset,
+    batchSize,
+  });
   const res = await axios.get("https://en.wikipedia.org/w/api.php", {
     params: {
       action: "query",
@@ -37,12 +47,22 @@ const pollWikipediaArticles = async (offset: number, searchTerm: string): Promis
     },
   });
 
-  await Promise.all(res.data.query.search.map(article =>
-    sqs.sendMessage({
-      QueueUrl: queueUrl,
-      MessageBody: article.title
-    }).promise()
-  ));
+  console.log("wikipedia returned result for search", {
+    continueOffset: res.data?.continue?.sroffset,
+    totalHits: res.data?.query?.searchinfo?.totalhits,
+    currentBatchSize: res.data?.query?.search?.length
+  });
+
+  await Promise.all(
+    res.data.query.search.map((article) =>
+      sqs
+        .sendMessage({
+          QueueUrl: queueUrl,
+          MessageBody: article.title,
+        })
+        .promise()
+    )
+  );
 
   const continueOffset = res.data.continue?.sroffset;
   return continueOffset;
@@ -78,20 +98,28 @@ const pollRouter = express.Router();
 pollRouter.get("/:searchTerm", async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
-    if(!(searchTerm in continueOffsetBySearchTerm)) {
-      console.log(`request to poll search term ${searchTerm} for the first time. setting continue offset to 0`);
+    if (!(searchTerm in continueOffsetBySearchTerm)) {
+      console.log(
+        `request to poll search term ${searchTerm} for the first time. setting continue offset to 0`
+      );
       continueOffsetBySearchTerm[searchTerm] = 0;
     }
     const continueOffset = continueOffsetBySearchTerm[searchTerm];
-    const newContinueOffset = await pollWikipediaArticles(continueOffset, searchTerm);
+    const newContinueOffset = await pollWikipediaArticles(
+      continueOffset,
+      searchTerm
+    );
     continueOffsetBySearchTerm[searchTerm] = newContinueOffset;
+    const batchArticlesRead = newContinueOffset - continueOffset;
 
-    res.status(200).send({
+    const info = {
+      searchTerm,
       totalArticlesRead: newContinueOffset,
-      batchArticlesRead: newContinueOffset - continueOffset
-    });
+      batchArticlesRead,
+    };
+    res.status(200).send(info);
   } catch (e) {
-    console.log("failed to get poll article from wikipedia", e);
+    console.error("failed to poll articles batch from wikipedia", e);
     res.status(500);
   }
 });
@@ -103,7 +131,7 @@ app.use("/poll", pollRouter);
     await initSqs();
     app.listen(8080);
     console.log("wikipedia scraper started");
-  } catch(e) {
-    console.log('failed to init service', e);
+  } catch (e) {
+    console.error("failed to init service", e);
   }
 })();

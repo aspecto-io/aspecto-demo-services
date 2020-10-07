@@ -67,9 +67,9 @@ services:
   #     - localstack 
 
   scraper:
-    build: "./services/wikipedia-scraper"
+    build: "./services/scraper-service"
     volumes:
-      - "./services/wikipedia-scraper/src:/usr/src/app/src"
+      - "./services/scraper-service/src:/usr/src/app/src"
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
