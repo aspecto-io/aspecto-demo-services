@@ -145,11 +145,26 @@ const initSqs = async () => {
   console.log("sqs receive queue ready", { queueUrl });
 };
 
-const initService = async () => {
-  await Promise.all([mongoose.connect("mongodb://db/aspecto-demo"), initSqs()]);
+const initServer = async () => {
+  await mongoose.connect("mongodb://db/aspecto-demo");
   app.listen(8080);
-  console.log("wikipedia service started");
-  sqsProcessingLoop();
-};
-initService();
+  console.log("wikipedia service started in mode server");
+}
+
+const initProcessor = async () => {
+  await Promise.all([mongoose.connect("mongodb://db/aspecto-demo"), initSqs()]);
+  console.log("wikipedia service started in mode processor");
+  sqsProcessingLoop();  
+}
+
+switch(process.env.MODE) {
+  case 'PROCESSOR':
+    initProcessor();
+    break;
+  case 'SERVER':
+    initServer();
+    break;
+  default:
+    console.error('environment variable MODE should be set to either "PROCESSOR" or "SERVER"');
+}
 
