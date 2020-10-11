@@ -7,6 +7,7 @@ initAspecto({
 import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
 import express from "express";
+import cors from 'cors';
 import axios from "axios";
 import Redis from "ioredis";
 
@@ -70,6 +71,7 @@ const sqsProcessingLoop = async () => {
 };
 
 const app = express();
+app.use(cors());
 app.use(async (req, res, next) => {
   try {
     const { token } = req.query;
@@ -99,7 +101,7 @@ articlesRouter.get("/", async (req, res) => {
   try {
     console.log('querying db for all article ids');
     const allArticlesIds = await ArticleModel.aggregate([
-      { $project: { id: 1}}
+      { $project: { id: 1, title: 1}}
     ]);
     console.log(`Returning ids of all ${allArticlesIds.length} articles in db`);
     res.json(allArticlesIds);

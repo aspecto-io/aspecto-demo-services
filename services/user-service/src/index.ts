@@ -20,6 +20,7 @@ app.post('/user/login', async (req, res) => {
         const { username, password } = req.body;
         const { fail } = req.query;
 
+        console.log('trying to login user', {username, password});
         if (fail) {
             throw new Error(`Can't process your request`);
         } else {

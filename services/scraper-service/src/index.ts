@@ -5,6 +5,7 @@ init({
 });
 import axios from "axios";
 import express from "express";
+import cors from 'cors';
 import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
 
@@ -137,6 +138,7 @@ const pollWikipediaArticles = async (
 };
 
 const app = express();
+app.use(cors())
 app.use(async (req, res, next) => {
   try {
     const { token } = req.query;
@@ -161,7 +163,7 @@ app.use(async (req, res, next) => {
 
 const pollRouter = express.Router();
 
-pollRouter.get("/:searchTerm", async (req, res) => {
+pollRouter.post("/:searchTerm", async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
     await addQueryJobToQueue(
@@ -192,3 +194,4 @@ app.use("/poll", pollRouter);
     console.error("failed to init service", e);
   }
 })();
+
