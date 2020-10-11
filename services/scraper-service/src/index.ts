@@ -5,7 +5,7 @@ init({
 });
 import axios from "axios";
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
 
@@ -42,16 +42,22 @@ const addQueryJobToQueue = async (
 };
 
 const createQueue = async (queueName): Promise<string> => {
-  const newArticleQueueRes = await sqs
-    .createQueue({
-      QueueName: queueName,
-    })
-    .promise();
-  console.log("queue is ready", {
-    queueUrl: newArticleQueueRes.QueueUrl,
-    queueName,
-  });
-  return newArticleQueueRes.QueueUrl;
+  try {
+    console.log('will create an sqs queue', {queueName});
+    const newArticleQueueRes = await sqs
+      .createQueue({
+        QueueName: queueName,
+      })
+      .promise();
+    console.log("queue is ready", {
+      queueUrl: newArticleQueueRes.QueueUrl,
+      queueName,
+    });
+    return newArticleQueueRes.QueueUrl;
+  } catch (err) {
+    console.error("failed to create sqs queue. exiting", {queueName});
+    throw err;
+  }
 };
 
 const handleWikiQueryJob = async (wikiQueryJob: WikiQueryJob) => {
@@ -90,7 +96,8 @@ const initSqs = async () => {
 
   const sqsConsumer = Consumer.create({
     queueUrl: wikiQueryJobQueueUrl,
-    handleMessage: async (message) => handleWikiQueryJob(JSON.parse(message.Body)),
+    handleMessage: async (message) =>
+      handleWikiQueryJob(JSON.parse(message.Body)),
   });
   sqsConsumer.on("error", (err) => console.error(err.message));
   sqsConsumer.on("processing_error", (err) => console.error(err.message));
@@ -138,7 +145,7 @@ const pollWikipediaArticles = async (
 };
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(async (req, res, next) => {
   try {
     const { token } = req.query;
@@ -194,4 +201,3 @@ app.use("/poll", pollRouter);
     console.error("failed to init service", e);
   }
 })();
-

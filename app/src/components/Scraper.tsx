@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import axios from 'axios';
+import UserContext from '../context/UserContext';
 
 const Scraper = () => {
 
     const [searchTerm, setSearchTerm] = React.useState<string>("");
+    const user = useContext(UserContext);
 
     const startScraping = async () => {
 
         try {
-            await axios.post(`http://localhost:8001/poll/${searchTerm}?token=123456`);
+            await axios.post(`http://localhost:8001/poll/${searchTerm}?token=${user.token}`);
         } catch(err) {
             console.log(err);
         }

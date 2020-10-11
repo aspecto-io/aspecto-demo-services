@@ -2,12 +2,12 @@ import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
   local: true,
   logger: console,
-  packageName: `wikipedia-service ${process.env.MODE}`
+  packageName: `wikipedia-service ${process.env.MODE}`,
 });
 import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 import axios from "axios";
 import Redis from "ioredis";
 
@@ -37,7 +37,7 @@ const handleSqsBatch = async () => {
 
   // process messages
   res.Messages.forEach((m) => {
-    console.log('processing new article from sqs', {title: m.Body});
+    console.log("processing new article from sqs", { title: m.Body });
     const article = new ArticleModel({
       title: m.Body,
     });
@@ -86,7 +86,10 @@ app.use(async (req, res, next) => {
         res.sendStatus(401);
       }
     } else {
-      console.info('token missing in query string for incoming http request', req.path);
+      console.info(
+        "token missing in query string for incoming http request",
+        req.path
+      );
       res.sendStatus(401);
     }
   } catch (e) {
@@ -99,9 +102,9 @@ const articlesRouter = express.Router();
 
 articlesRouter.get("/", async (req, res) => {
   try {
-    console.log('querying db for all article ids');
+    console.log("querying db for all article ids");
     const allArticlesIds = await ArticleModel.aggregate([
-      { $project: { id: 1, title: 1}}
+      { $project: { id: 1, title: 1 } },
     ]);
     console.log(`Returning ids of all ${allArticlesIds.length} articles in db`);
     res.json(allArticlesIds);
@@ -114,19 +117,21 @@ articlesRouter.get("/", async (req, res) => {
 articlesRouter.get("/:id", async (req, res) => {
   const articleId = req.params.id;
   try {
-    console.log('get request for article', {articleId});
+    console.log("get request for article", { articleId });
     const cachedValue = await redis.get(articleId);
     if (cachedValue) {
-      console.log('returning article info from redis cache', {articleId});
+      console.log("returning article info from redis cache", { articleId });
       res.send(cachedValue);
       return;
     }
 
-    console.log('article not found in cache, querying in mongodb', {articleId});
+    console.log("article not found in cache, querying in mongodb", {
+      articleId,
+    });
     const article = await ArticleModel.findOne({ _id: articleId });
     if (!article) res.sendStatus(404);
     else {
-      console.log('article found in mongodb. storing it in redis');
+      console.log("article found in mongodb. storing it in redis");
       redis.set(article._id, JSON.stringify(article));
       res.json(article);
     }
@@ -139,35 +144,51 @@ articlesRouter.get("/:id", async (req, res) => {
 app.use("/article", articlesRouter);
 
 const initSqs = async () => {
-  const res = await sqs
-    .createQueue({
-      QueueName: "new-wiki-article",
-    })
-    .promise();
-  queueUrl = res.QueueUrl;
-  console.log("sqs receive queue ready", { queueUrl });
+  const queueName = "new-wiki-article";
+  try {
+    console.log('will try to create sqs queue', {queueName});
+    const res = await sqs
+      .createQueue({
+        QueueName: queueName,
+      })
+      .promise();
+    queueUrl = res.QueueUrl;
+    console.log("sqs receive queue ready", { queueUrl });
+  } catch (err) {
+    console.error("failed to create sqs queue", { queueName });
+    throw err;
+  }
 };
 
-const initServer = async () => {
+const connectToMongo = async () => {
+  console.log('attempting to connect to mongodb');
   await mongoose.connect("mongodb://db/aspecto-demo");
+  console.log('mongo db connected');
+}
+
+const initServer = async () => {
+  await connectToMongo();
   app.listen(8080);
   console.log("wikipedia service started in mode server");
-}
+};
 
 const initProcessor = async () => {
-  await Promise.all([mongoose.connect("mongodb://db/aspecto-demo"), initSqs()]);
+  await Promise.all([connectToMongo(), initSqs()]);
   console.log("wikipedia service started in mode processor");
-  sqsProcessingLoop();  
-}
+  sqsProcessingLoop();
+};
 
-switch(process.env.MODE) {
-  case 'PROCESSOR':
+console.log(`service in mode ${process.env.MODE}`);
+
+switch (process.env.MODE) {
+  case "PROCESSOR":
     initProcessor();
     break;
-  case 'SERVER':
+  case "SERVER":
     initServer();
     break;
   default:
-    console.error('environment variable MODE should be set to either "PROCESSOR" or "SERVER"');
+    console.error(
+      'environment variable MODE should be set to either "PROCESSOR" or "SERVER"'
+    );
 }
-

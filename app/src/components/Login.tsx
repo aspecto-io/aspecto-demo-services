@@ -1,42 +1,53 @@
 import axios from "axios";
-import React from "react";
+import React, { useContext } from "react";
+import { Button, Input, InputLabel, Typography } from "@material-ui/core";
+import { User } from '../context/UserContext';
 
-const Login = () => {
-  const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
+interface Props {
+  setUser: (user: User) => void;
+}
+
+const Login: React.FC<Props> = ({setUser}) => {
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
   const [error, setError] = React.useState<string>();
 
-    const handleLogin = async () => {
-        const payload = {username: email, password};
-        try {
-            await axios.post('http://localhost:8000/user/login', payload);
-        } catch(err) {
-            setError('login failed, try again');
-        }
+  const handleLogin = async () => {
+    const payload = { username: email, password };
+    try {
+      const res = await axios.post("http://localhost:8000/user/login", payload);
+      setUser({
+        token: res.data.token,
+      });
+    } catch (err) {
+      setError("login failed, try again");
     }
+  };
 
   return (
     <div>
       <h1>Login to Aspecto Demo App</h1>
       <div>
-        <label>Email:</label>
-        <input
+        <InputLabel>Email:</InputLabel>
+        <Input
           type="text"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
         />
       </div>
       <div>
-        <label>Password:</label>
-        <input
+        <InputLabel>Password:</InputLabel>
+        <Input
           type="text"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
         />
       </div>
-      <button type="submit" onClick={handleLogin}>Login</button>
+      <Button type="submit" onClick={handleLogin}>
+        Login
+      </Button>
       <br />
-      { error && <p>{error}</p>}
+      {error && <p>{error}</p>}
     </div>
   );
 };
