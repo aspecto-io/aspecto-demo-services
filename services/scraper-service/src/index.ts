@@ -40,7 +40,7 @@ const addQueryJobToQueue = async (
     .promise();
 };
 
-const createQueue = async (queueName): string => {
+const createQueue = async (queueName): Promise<string> => {
   const newArticleQueueRes = await sqs
     .createQueue({
       QueueName: queueName,
@@ -84,12 +84,12 @@ const handleWikiQueryJob = async (wikiQueryJob: WikiQueryJob) => {
 };
 
 const initSqs = async () => {
-  newArticlesQueueUrl = createQueue("new-wiki-article");
-  wikiQueryJobQueueUrl = createQueue("wiki-query-job");
+  newArticlesQueueUrl = await createQueue("new-wiki-article");
+  wikiQueryJobQueueUrl = await createQueue("wiki-query-job");
 
   const sqsConsumer = Consumer.create({
     queueUrl: wikiQueryJobQueueUrl,
-    handleMessage: async (message) => handleWikiQueryJob(JSON.parse(message)),
+    handleMessage: async (message) => handleWikiQueryJob(JSON.parse(message.Body)),
   });
   sqsConsumer.on("error", (err) => console.error(err.message));
   sqsConsumer.on("processing_error", (err) => console.error(err.message));
