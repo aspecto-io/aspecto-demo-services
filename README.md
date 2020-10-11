@@ -8,7 +8,9 @@ It is composed of the following infra services:
     * Register users to the system
     * Authenticate users on api calls
 - Scraper:
-    * access the wikipedia public api to search for articles with specific text, and push the result to simple pipeline sqs queue in batches for processing.
+    * Register new articles to scrape with http endpoint
+    * Read batch query jobs from sqs queue, and write new jobs to the queue.
+    * Access the wikipedia public api to search for articles with specific text, and push the result to simple pipeline sqs queue in batches for processing.
 - Wikipedia Service:
     * In PROCESSING mode - fetch wikipedia article data from the pipeline, and store it in db.
     * In SERVER mode - expose http api for users to query and modified the articles data
@@ -40,3 +42,8 @@ wikipedia-service_1  | |                                                        
 wikipedia-service_1  | ====================================================================================================================================
 ```
 5. Open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests. Examine the live traces in aspecto website.
+
+## Aspecto Live Flows
+Once you start the system and let it run, you'll start to see traces being generated. 
+
+Even without initiating any api call, you'll see traces that are continuously polling messages from SQS every 20 seconds (They will show up in the UI with "FLOW LENGTH" of 2 and "ENTRY POINT" of `SQS receiveMessage from "wiki-query-job"` and `SQS receiveMessage from "new-wiki-article"`). It is recommended to "Group" or "Exclude" them in the ui since they are not so interesting. Use the options on the right side of each line (`...`) to do that.
