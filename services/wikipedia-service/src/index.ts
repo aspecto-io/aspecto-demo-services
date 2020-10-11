@@ -2,6 +2,7 @@ import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
   local: true,
   logger: console,
+  packageName: `wikipedia-service ${process.env.MODE}`
 });
 import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
