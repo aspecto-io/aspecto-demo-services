@@ -12,8 +12,6 @@ services:
 
   db:
     image: mongo
-    expose:
-      - "27017"
 
   user:
     build: "./services/user-service"

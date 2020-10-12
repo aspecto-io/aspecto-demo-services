@@ -5,7 +5,7 @@ import UserContext, { User } from "./context/UserContext";
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 function App() {
-  const [user, setUser] = useState<User>({});
+  const [user, setUser] = useState<User>({token: '123456'});
 
   return (
     <div className="App">
