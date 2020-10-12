@@ -1,24 +1,17 @@
-import React, { useContext, useState } from "react";
-import "./App.css";
+import React, { useState } from "react";
 import Login from "./components/Login";
-import Scraper from "./components/Scraper";
-import SearchResults from "./components/SearchResults";
-import UserContext, {User} from "./context/UserContext";
+import Main from "./components/Main";
+import UserContext, { User } from "./context/UserContext";
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 function App() {
   const [user, setUser] = useState<User>({});
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Aspecto Demo Application</h1>
-      </header>
+      <CssBaseline />
       <UserContext.Provider value={user}>
-        <main>
-          {!user.token && <Login setUser={setUser} />}
-          {user.token && <Scraper />}
-          {/* <SearchResults /> */}
-        </main>
+        {user.token ? <Main /> : <Login setUser={setUser} />}
       </UserContext.Provider>
     </div>
   );

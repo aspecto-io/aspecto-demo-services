@@ -1,18 +1,53 @@
 import axios from "axios";
-import React, { useContext } from "react";
-import { Button, Input, InputLabel, Typography } from "@material-ui/core";
-import { User } from '../context/UserContext';
+import React from "react";
+import {
+  Avatar,
+  Button,
+  Container,
+  makeStyles,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { User } from "../context/UserContext";
 
 interface Props {
   setUser: (user: User) => void;
 }
 
-const Login: React.FC<Props> = ({setUser}) => {
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+  },
+  demoHint: {
+    color: "#aaaaaa",
+    fontSize: "0.75rem",
+  },
+  form: {
+    width: '100%',
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+const Login: React.FC<Props> = ({ setUser }) => {
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [error, setError] = React.useState<string>();
 
-  const handleLogin = async () => {
+  const classes = useStyles();
+
+  const handleLogin = async (event: any) => {
+    event.preventDefault();
     const payload = { username: email, password };
     try {
       const res = await axios.post("http://localhost:8000/user/login", payload);
@@ -25,30 +60,58 @@ const Login: React.FC<Props> = ({setUser}) => {
   };
 
   return (
-    <div>
-      <h1>Login to Aspecto Demo App</h1>
-      <div>
-        <InputLabel>Email:</InputLabel>
-        <Input
-          type="text"
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-        />
+    <Container component="main" maxWidth="xs">
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5" color="primary">
+          Sign in
+        </Typography>
+        <form noValidate className={classes.form} onSubmit={handleLogin}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+          <Typography className={classes.demoHint}>
+            Demo default email is "demo@aspecto.io"
+          </Typography>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+          />
+          <Typography className={classes.demoHint}>
+            Demo default password is "123123"
+          </Typography>
+          <Button
+            type="submit"
+            className={classes.submit}
+            fullWidth
+            variant="contained"
+            color="primary"
+          >
+            Sign In
+          </Button>
+        </form>
       </div>
-      <div>
-        <InputLabel>Password:</InputLabel>
-        <Input
-          type="text"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-        />
-      </div>
-      <Button type="submit" onClick={handleLogin}>
-        Login
-      </Button>
-      <br />
-      {error && <p>{error}</p>}
-    </div>
+    </Container>
   );
 };
 
