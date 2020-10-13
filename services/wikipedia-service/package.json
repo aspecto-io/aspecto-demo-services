@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start:docker": "wait-for-it localstack:4566 -t 60 --strict -- yarn start",
-    "start": "ts-node-dev ./src/index.ts"
+    "start": "ts-node-dev --transpile-only ./src/index.ts"
   },
   "dependencies": {
     "@aspecto/opentelemetry": "^0.0.65",

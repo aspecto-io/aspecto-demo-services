@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node-dev ./src/index.ts"
+    "start:docker": "yarn start",
+    "start": "ts-node-dev --transpile-only ./src/index.ts"
   },
   "dependencies": {
     "@aspecto/opentelemetry": "^0.0.65",
