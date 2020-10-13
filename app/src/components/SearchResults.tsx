@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import {
   Grid,
@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
+import UserContext, { User } from "../context/UserContext";
 
 interface Article {
   id: string;
@@ -23,9 +24,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fetchSelectedArticle = (
+  token: string,
+  selectedArticleId: string | undefined,
+  setSelectedArticle: (article: Article | undefined) => void
+) => {
+  setSelectedArticle(undefined);
+  if (!selectedArticleId) return;
+  axios
+    .get(`http://localhost:8002/article/${selectedArticleId}?token=${token}`)
+    .then((res) => {
+      setSelectedArticle({
+        id: res.data._id,
+        title: res.data.title,
+        pageId: res.data.pageId,
+        rating: res.data.rating,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const SearchResults = () => {
   const classes = useStyles();
 
+  const user: User = useContext(UserContext);
   const [articles, setArticles] = React.useState<Article[] | undefined>();
   const [selectedArticle, setSelectedArticle] = React.useState<Article>();
   const [selectedArticleId, setSelectedArticleId] = React.useState<string>();
@@ -33,7 +57,7 @@ const SearchResults = () => {
   React.useEffect(() => {
     try {
       axios
-        .get("http://localhost:8002/article?token=123456")
+        .get(`http://localhost:8002/article?token=${user.token}`)
         .then((res) => {
           setArticles(
             res.data.map((article: any) => ({
@@ -48,27 +72,12 @@ const SearchResults = () => {
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [user.token]);
 
-  const getSelectedArticle = () => {
-    setSelectedArticle(undefined);
-    if (!selectedArticleId) return;
-    axios
-      .get(`http://localhost:8002/article/${selectedArticleId}?token=123456`)
-      .then((res) => {
-        setSelectedArticle({
-          id: res.data._id,
-          title: res.data.title,
-          pageId: res.data.pageId,
-          rating: res.data.rating,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  React.useEffect(() => getSelectedArticle(), [selectedArticleId]);
+  React.useEffect(
+    () => fetchSelectedArticle(user.token!, selectedArticleId, setSelectedArticle),
+    [selectedArticleId, user.token]
+  ); 
 
   const setRatingForArticle = (articleId: string, newRating: number | null) => {
     axios
@@ -77,7 +86,7 @@ const SearchResults = () => {
       })
       .then((res) => {
         console.log("rating set successfully");
-        getSelectedArticle();
+        fetchSelectedArticle(user.token!, selectedArticleId, setSelectedArticle);
       })
       .catch((err) => {
         console.log(err);

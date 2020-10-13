@@ -109,6 +109,8 @@ const Login: React.FC<Props> = ({ setUser }) => {
           >
             Sign In
           </Button>
+
+          {error && <Typography>{error}</Typography>}
         </form>
       </div>
     </Container>
