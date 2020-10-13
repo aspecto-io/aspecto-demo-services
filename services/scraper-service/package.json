@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start:docker": "wait-for-it localstack:4566 -t 60 --strict -- yarn start",
     "start": "ts-node-dev ./src/index.ts"
   },
   "dependencies": {
