@@ -6,8 +6,9 @@ initAspecto({
 });
 import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
-import express from "express";
+import express, { json } from "express";
 import cors from "cors";
+import bodyParser from 'body-parser';
 import axios from "axios";
 import Redis from "ioredis";
 
@@ -21,6 +22,8 @@ const redis = new Redis("redis");
 
 const articleSchema = new mongoose.Schema({
   title: { type: String },
+  pageId: { type: Number },
+  rating: { type: Number, required: false }
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
 
@@ -37,10 +40,9 @@ const handleSqsBatch = async () => {
 
   // process messages
   res.Messages.forEach((m) => {
-    console.log("processing new article from sqs", { title: m.Body });
-    const article = new ArticleModel({
-      title: m.Body,
-    });
+    const {title, pageId} = JSON.parse(m.Body);
+    console.log("processing new article from sqs", {title, pageId});
+    const article = new ArticleModel({title, pageId});
     article.save();
   });
 
@@ -72,6 +74,7 @@ const sqsProcessingLoop = async () => {
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 app.use(async (req, res, next) => {
   try {
     const { token } = req.query;
@@ -140,6 +143,25 @@ articlesRouter.get("/:id", async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+articlesRouter.post("/:id/rating", async (req, res) => {
+  const articleId = req.params.id;
+  try {
+    const {rating} = req.body;
+    console.log("post request to set rating on article", { articleId, rating });
+    if(rating === undefined) {
+      res.status(400).send("no rating is set in request body");
+      return;
+    }
+    await ArticleModel.updateOne({ _id: articleId }, {rating});
+    await redis.del(articleId);
+    res.sendStatus(200);
+  } catch(err) {
+    console.error("failed to set rating for article", {articleId});
+    res.sendStatus(500);
+  }
+});
+
 
 app.use("/article", articlesRouter);
 

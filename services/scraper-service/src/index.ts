@@ -134,7 +134,10 @@ const pollWikipediaArticles = async (
       sqs
         .sendMessage({
           QueueUrl: newArticlesQueueUrl,
-          MessageBody: article.title,
+          MessageBody: JSON.stringify({
+            title: article.title,
+            pageId: article.pageid,
+          }),
         })
         .promise()
     )

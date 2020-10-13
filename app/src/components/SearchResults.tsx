@@ -1,13 +1,31 @@
 import React from "react";
 import axios from "axios";
-import { Container, Grid, List, ListItem, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Link,
+  List,
+  ListItem,
+  makeStyles,
+  Typography,
+} from "@material-ui/core";
+import { Rating } from "@material-ui/lab";
 
 interface Article {
   id: string;
   title: string;
+  pageId: number;
+  rating?: number;
 }
 
+const useStyles = makeStyles((theme) => ({
+  section: {
+    height: "100%",
+  },
+}));
+
 const SearchResults = () => {
+  const classes = useStyles();
+
   const [articles, setArticles] = React.useState<Article[] | undefined>();
   const [selectedArticle, setSelectedArticle] = React.useState<Article>();
   const [selectedArticleId, setSelectedArticleId] = React.useState<string>();
@@ -32,25 +50,48 @@ const SearchResults = () => {
     }
   }, []);
 
-  React.useEffect(() => {
+  const getSelectedArticle = () => {
     setSelectedArticle(undefined);
-    if(!selectedArticleId) return;
+    if (!selectedArticleId) return;
     axios
       .get(`http://localhost:8002/article/${selectedArticleId}?token=123456`)
       .then((res) => {
         setSelectedArticle({
           id: res.data._id,
           title: res.data.title,
+          pageId: res.data.pageId,
+          rating: res.data.rating,
         });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [selectedArticleId]);
+  };
+
+  React.useEffect(() => getSelectedArticle(), [selectedArticleId]);
+
+  const setRatingForArticle = (articleId: string, newRating: number | null) => {
+    axios
+      .post(`http://localhost:8002/article/${articleId}/rating?token=123456`, {
+        rating: newRating,
+      })
+      .then((res) => {
+        console.log("rating set successfully");
+        getSelectedArticle();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
-    <Grid container>
-      <Grid item xs={6}>
+    <Grid container style={{ height: "100%", overflow: "hidden" }}>
+      <Grid
+        item
+        xs={6}
+        className={classes.section}
+        style={{ overflowX: "hidden", overflowY: "scroll", height: "100%" }}
+      >
         <Typography variant="h3">Articles</Typography>
         {articles === undefined ? (
           <p>loading...</p>
@@ -73,9 +114,24 @@ const SearchResults = () => {
       </Grid>
       {selectedArticle && (
         <Grid item xs={6}>
-          {console.log(selectedArticle)}          
-          <Typography variant="h4">{selectedArticle.title}</Typography>
-          Id: {selectedArticle.id}
+          <Typography variant="h5">{selectedArticle.title}</Typography>
+          <div>
+            <Link
+              href={`https://en.wikipedia.org/?curid=${selectedArticle.pageId}`}
+              target="_blank"
+            >
+              View on Wikipedia
+            </Link>
+          </div>
+          <div>
+            <Typography>Set your rating for this article:</Typography>{" "}
+            <Rating
+              value={selectedArticle.rating}
+              onChange={(event, newValue) =>
+                setRatingForArticle(selectedArticle.id, newValue)
+              }
+            />
+          </div>
         </Grid>
       )}
     </Grid>
