@@ -5,11 +5,11 @@ This demo application is a micro-serivce system which scrape articles from wikip
 
 It is composed of the following infra services:
 - Users Service:
-    * Register users to the system
-    * Authenticate users on api calls
+    * Authenticate registered users
+    * Register new users to the system
 - Scraper:
-    * Register new articles to scrape with http endpoint
-    * Read batch query jobs from sqs queue, and write new jobs to the queue.
+    * Expose api to create new scraping jobs
+    * Handle scraping jobs from sqs and write new jobs to that queue.
     * Access the wikipedia public api to search for articles with specific text, and push the result to simple pipeline sqs queue in batches for processing.
 - Wikipedia Service:
     * In PROCESSING mode - fetch wikipedia article data from the pipeline, and store it in db.
