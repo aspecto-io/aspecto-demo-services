@@ -41,7 +41,7 @@ wikipedia-service_1  | | 🕵️‍♀️ See the live tracing stream at https:/
 wikipedia-service_1  | |                                                                                                                                  |
 wikipedia-service_1  | ====================================================================================================================================
 ```
-5. Open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests. Examine the live traces in aspecto website.
+5. Browse http://localhost:3033/ and play with the system. examine the live traces generated in aspecto website. You can also open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests directly. 
 
 ## Aspecto Live Flows
 Once you start the system and let it run, you'll start to see traces being generated. 
