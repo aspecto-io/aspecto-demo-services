@@ -83,7 +83,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
             value={email}
           />
           <Typography className={classes.demoHint}>
-            Demo default email is "demo@aspecto.io"
+            Demo default email is "wikipedia-demo@aspecto.io"
           </Typography>
           <TextField
             variant="outlined"
@@ -98,7 +98,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
             value={password}
           />
           <Typography className={classes.demoHint}>
-            Demo default password is "123123"
+            Demo default password is "Aspecto123"
           </Typography>
           <Button
             type="submit"

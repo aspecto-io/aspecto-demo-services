@@ -77,7 +77,7 @@ getDBModel().then((model) => {
 });
 
 async function getDBModel() {
-    const demoUserEmail = "demo@aspecto.io";
+    const demoUserEmail = "wikipedia-demo@aspecto.io";
     const usersSchema = new mongoose.Schema({
         username: String,
         password: String,
@@ -88,20 +88,16 @@ async function getDBModel() {
 
     await mongoose.connect('mongodb://db/aspecto-demo');
 
-
     const demoUser = await User.findOne({ username: demoUserEmail });
     if (!demoUser) {
         await new User({
             username: demoUserEmail,
-            password: 123123,
+            password: 'Aspecto123',
             token:123456
         }).save();
-
-
     }
 
     console.log('Mongo is ready!');
-
     return User;
 }
 
