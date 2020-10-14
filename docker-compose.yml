@@ -25,40 +25,6 @@ services:
     depends_on:
       - db
 
-  # item:
-  #   build: "./services/item-service"
-  #   volumes:
-  #     - "./services/item-service:/usr/src/app"
-  #     - "/usr/src/app/node_modules"
-  #   ports:
-  #     - "8001:8080"
-  #   environment:
-  #     - ASPECTO_AUTH
-  #     - ASPECTO_GITHASH
-  #   depends_on:
-  #     - redis
-  #     - db
-  #     - user
-
-  # auction:
-  #   build: "./services/auction-service"
-  #   volumes:
-  #     - "./services/auction-service:/usr/src/app"
-  #     - "/usr/src/app/node_modules"
-  #   ports:
-  #     - "8002:8080"
-  #   environment:
-  #     - ASPECTO_AUTH
-  #     - ASPECTO_GITHASH
-  #     - AWS_ACCESS_KEY_ID=foobar
-  #     - AWS_SECRET_ACCESS_KEY=foobar
-  #     - AWS_DEFAULT_REGION=us-east-1 # default region for localstack
-  #   depends_on:
-  #     - redis
-  #     - db
-  #     - user
-  #     - localstack
-
   scraper:
     build: "./services/scraper-service"
     volumes:
