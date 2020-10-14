@@ -24,10 +24,14 @@ It is composed of the following infra services:
 
 ## How to Run
 1. `git clone` the project locally
-2. Copy your aspecto token from [aspecto website](https://app.aspecto.io/app/integration/api-key).
-3. Run the following command in terminal, replace `YOUR_ASPECTO_TOKEN` with the token you copied.
+2. Open [Aspecto application](https://app.aspecto.io/) and login with email:
 ```
-ASPECTO_AUTH={YOUR_ASPECTO_TOKEN} ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
+Email: wikipedia-demo@aspecto.io
+Password: Aspecto123
+```
+3. Run the following command in terminal:
+```
+ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
 ```
 This command might take few minutes on first run.
 Docker compose will pull and build any missing images, run the services, and output logs to the console. 
@@ -41,7 +45,7 @@ wikipedia-service_1  | | 🕵️‍♀️ See the live tracing stream at https:/
 wikipedia-service_1  | |                                                                                                                                  |
 wikipedia-service_1  | ====================================================================================================================================
 ```
-5. Browse http://localhost:3033/ and play with the system. examine the live traces generated in aspecto website. You can also open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests directly. 
+5. Browse http://localhost:3000/ and play with the system. examine the live traces generated in aspecto website. You can also open postman and load the collection `aspecto-demo-services.postman_collection.json` in this repository directory, and send requests directly. 
 
 ## Aspecto Live Flows
 Once you start the system and let it run, you'll start to see traces being generated. 
