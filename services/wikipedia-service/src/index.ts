@@ -3,11 +3,11 @@ initAspecto({
   aspectoAuth: process.env.ASPECTO_AUTH ?? 'e97d7a26-db48-4afd-bba2-be4d453047eb',
   local: true,
   logger: console,
-  packageName: `wikipedia-service ${process.env.MODE}`,
+  packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
 });
 import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
-import express, { json } from "express";
+import express from "express";
 import cors from "cors";
 import bodyParser from 'body-parser';
 import axios from "axios";
