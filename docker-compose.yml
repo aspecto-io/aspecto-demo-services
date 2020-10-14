@@ -32,6 +32,7 @@ services:
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     ports:
@@ -47,6 +48,7 @@ services:
       - MODE=PROCESSOR
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     depends_on:
@@ -80,5 +82,6 @@ services:
       - "4566:4566"
       - "4571:4571"
     environment:
+      - DEFAULT_REGION=us-east-1
       - SERVICES=sqs
       - HOSTNAME_EXTERNAL=localstack
