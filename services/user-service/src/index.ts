@@ -16,7 +16,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors({}))
 
-
 app.post('/user/login', async (req, res) => {
     try {
         const { username, password } = req.body;
