@@ -27,6 +27,7 @@ const articleSchema = new mongoose.Schema({
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
 
+
 const handleSqsBatch = async () => {
   const res = await sqs
     .receiveMessage({
