@@ -1,6 +1,7 @@
 import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
-  aspectoAuth: process.env.ASPECTO_AUTH ?? 'e97d7a26-db48-4afd-bba2-be4d453047eb',
+  aspectoAuth:
+    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
   local: true,
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
@@ -9,7 +10,7 @@ import { SQS } from "aws-sdk";
 import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 import axios from "axios";
 import Redis from "ioredis";
 
@@ -23,7 +24,7 @@ const redis = new Redis("redis");
 const articleSchema = new mongoose.Schema({
   title: { type: String },
   pageId: { type: Number },
-  rating: { type: Number, required: false }
+  rating: { type: Number, required: false },
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
 
@@ -40,9 +41,9 @@ const handleSqsBatch = async () => {
 
   // process messages
   res.Messages.forEach((m) => {
-    const {title, pageId} = JSON.parse(m.Body);
-    console.log("processing new article from sqs", {title, pageId});
-    const article = new ArticleModel({title, pageId});
+    const { title, pageId } = JSON.parse(m.Body);
+    console.log("processing new article from sqs", { title, pageId });
+    const article = new ArticleModel({ title, pageId });
     article.save();
   });
 
@@ -118,57 +119,86 @@ articlesRouter.get("/", async (req, res) => {
 });
 
 articlesRouter.get("/:id", async (req, res) => {
-  const articleId = req.params.id;
-  try {
-    console.log("get request for article", { articleId });
-    const cachedValue = await redis.get(articleId);
-    if (cachedValue) {
-      console.log("returning article info from redis cache", { articleId });
-      res.send(cachedValue);
-      return;
-    }
+  // const articleId = req.params.id;
+  // try {
+  //   console.log("get request for article", { articleId });
+  //   const cachedValue = await redis.get(articleId);
+  //   if (cachedValue) {
+  //     console.log("returning article info from redis cache", { articleId });
+  //     res.send(cachedValue);
+  //     return;
+  //   }
 
-    console.log("article not found in cache, querying in mongodb", {
-      articleId,
-    });
-    const article = await ArticleModel.findOne({ _id: articleId });
-    if (!article) res.sendStatus(404);
-    else {
-      console.log("article found in mongodb. storing it in redis");
-      redis.set(article._id, JSON.stringify(article));
-      res.json(article);
-    }
-  } catch (e) {
-    console.error("failed to get article", { articleId: articleId }, e);
-    res.sendStatus(500);
-  }
+  //   console.log("article not found in cache, querying in mongodb", {
+  //     articleId,
+  //   });
+  //   const article = await ArticleModel.findOne({ _id: articleId });
+  //   if (!article) res.sendStatus(404);
+  //   else {
+  //     console.log("article found in mongodb. storing it in redis");
+  //     redis.set(article._id, JSON.stringify(article));
+  //     res.json(article);
+  //   }
+  // } catch (e) {
+  //   console.error("failed to get article", { articleId: articleId }, e);
+  //   res.sendStatus(500);
+  // }
+  res.json({ fakePayload: true });
+});
+
+
+articlesRouter.get("/new-route", async (req, res) => {
+  // const articleId = req.params.id;
+  // try {
+  //   console.log("get request for article", { articleId });
+  //   const cachedValue = await redis.get(articleId);
+  //   if (cachedValue) {
+  //     console.log("returning article info from redis cache", { articleId });
+  //     res.send(cachedValue);
+  //     return;
+  //   }
+
+  //   console.log("article not found in cache, querying in mongodb", {
+  //     articleId,
+  //   });
+  //   const article = await ArticleModel.findOne({ _id: articleId });
+  //   if (!article) res.sendStatus(404);
+  //   else {
+  //     console.log("article found in mongodb. storing it in redis");
+  //     redis.set(article._id, JSON.stringify(article));
+  //     res.json(article);
+  //   }
+  // } catch (e) {
+  //   console.error("failed to get article", { articleId: articleId }, e);
+  //   res.sendStatus(500);
+  // }
+  res.json({ newRoute: true });
 });
 
 articlesRouter.post("/:id/rating", async (req, res) => {
   const articleId = req.params.id;
   try {
-    const {rating} = req.body;
+    const { rating } = req.body;
     console.log("post request to set rating on article", { articleId, rating });
-    if(rating === undefined) {
+    if (rating === undefined) {
       res.status(400).send("no rating is set in request body");
       return;
     }
-    await ArticleModel.updateOne({ _id: articleId }, {rating});
+    await ArticleModel.updateOne({ _id: articleId }, { rating });
     await redis.del(articleId);
     res.sendStatus(200);
-  } catch(err) {
-    console.error("failed to set rating for article", {articleId});
+  } catch (err) {
+    console.error("failed to set rating for article", { articleId });
     res.sendStatus(500);
   }
 });
-
 
 app.use("/article", articlesRouter);
 
 const initSqs = async () => {
   const queueName = "new-wiki-article";
   try {
-    console.log('will try to create sqs queue', {queueName});
+    console.log("will try to create sqs queue", { queueName });
     const res = await sqs
       .createQueue({
         QueueName: queueName,
@@ -183,10 +213,10 @@ const initSqs = async () => {
 };
 
 const connectToMongo = async () => {
-  console.log('attempting to connect to mongodb');
+  console.log("attempting to connect to mongodb");
   await mongoose.connect("mongodb://db/aspecto-demo");
-  console.log('mongo db connected');
-}
+  console.log("mongo db connected");
+};
 
 const initServer = async () => {
   await connectToMongo();
