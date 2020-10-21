@@ -11,7 +11,7 @@ import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
 
 // how many wiki pages to return in each batch (api call)
-const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 4;
+const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 2;
 
 // how much time in seconds to wait between each batch query to wikipedia
 const timeBetweenBatches: number =
@@ -111,7 +111,7 @@ const pollWikipediaArticles = async (
     wikiQueryJob,
     batchSize,
   });
-  const res = await axios.get("https://en.wikipedia.org/w/api.php", {
+  const res = await axios.get("https://en.wikipediakjdshfsldkfjldskdjllk.org/w/api.php", {
     params: {
       action: "query",
       list: "search",
