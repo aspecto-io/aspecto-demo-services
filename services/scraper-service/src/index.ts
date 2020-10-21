@@ -68,6 +68,14 @@ const handleWikiQueryJob = async (wikiQueryJob: WikiQueryJob) => {
       return;
     }
 
+    if (newContinueOffset > 3 * batchSize) {
+      console.log("polled enough search results from wikipedia for searchTerm. stopping", {
+        searchTerm: wikiQueryJob.searchTerm,
+        totalArticles: newContinueOffset,
+      });
+      return;
+    }
+
     console.log("registering job to poll next batch from wikipedia", {
       timeBetweenBatches,
       searchTerm: wikiQueryJob.searchTerm,
