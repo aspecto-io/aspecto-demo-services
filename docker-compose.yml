@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
 
-  scraper:
+  scraper-service:
     build: "./services/scraper-service"
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
