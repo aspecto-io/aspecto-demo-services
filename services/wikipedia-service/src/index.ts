@@ -64,11 +64,11 @@ const sqsProcessingLoop = async () => {
       await handleSqsBatch();
     } catch (e) {
       console.warn(
-        "failed to process message from sqs, will try again in 2 seconds",
+        "failed to process message from sqs, will try again soon",
         e
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
+    await new Promise((resolve) => setTimeout(resolve, 10 * 1000));
   }
 };
 

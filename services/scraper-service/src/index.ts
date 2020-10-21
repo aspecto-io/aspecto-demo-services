@@ -96,6 +96,7 @@ const initSqs = async () => {
 
   const sqsConsumer = Consumer.create({
     queueUrl: wikiQueryJobQueueUrl,
+    pollingWaitTimeMs: 60000,
     handleMessage: async (message) =>
       handleWikiQueryJob(JSON.parse(message.Body)),
   });
@@ -111,7 +112,7 @@ const pollWikipediaArticles = async (
     wikiQueryJob,
     batchSize,
   });
-  const res = await axios.get("https://en.wikipediakjdshfsldkfjldskdjllk.org/w/api.php", {
+  const res = await axios.get("https://en.wikipedia.org/w/api.php", {
     params: {
       action: "query",
       list: "search",
