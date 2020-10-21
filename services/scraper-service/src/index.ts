@@ -1,6 +1,7 @@
 import init from "@aspecto/opentelemetry";
 init({
-  aspectoAuth: process.env.ASPECTO_AUTH ?? 'e97d7a26-db48-4afd-bba2-be4d453047eb',
+  aspectoAuth:
+    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
   local: true,
   logger: console,
 });
@@ -28,22 +29,19 @@ interface WikiQueryJob {
   continueOffset: number;
 }
 
-const addQueryJobToQueue = async (
-  wikiQueryJob: WikiQueryJob,
-  delaySeconds: number
-) => {
+const addQueryJobToQueue = async (wikiQueryJob: WikiQueryJob) => {
   await sqs
     .sendMessage({
       QueueUrl: wikiQueryJobQueueUrl,
       MessageBody: JSON.stringify(wikiQueryJob),
-      DelaySeconds: delaySeconds,
+      DelaySeconds: timeBetweenBatches,
     })
     .promise();
 };
 
 const createQueue = async (queueName): Promise<string> => {
   try {
-    console.log('will create an sqs queue', {queueName});
+    console.log("will create an sqs queue", { queueName });
     const newArticleQueueRes = await sqs
       .createQueue({
         QueueName: queueName,
@@ -55,7 +53,7 @@ const createQueue = async (queueName): Promise<string> => {
     });
     return newArticleQueueRes.QueueUrl;
   } catch (err) {
-    console.error("failed to create sqs queue. exiting", {queueName});
+    console.error("failed to create sqs queue. exiting", { queueName });
     throw err;
   }
 };
@@ -74,19 +72,16 @@ const handleWikiQueryJob = async (wikiQueryJob: WikiQueryJob) => {
       timeBetweenBatches,
       searchTerm: wikiQueryJob.searchTerm,
     });
-    await addQueryJobToQueue(
-      {
-        searchTerm: wikiQueryJob.searchTerm,
-        continueOffset: newContinueOffset,
-      },
-      timeBetweenBatches
-    );
+    await addQueryJobToQueue({
+      searchTerm: wikiQueryJob.searchTerm,
+      continueOffset: newContinueOffset,
+    });
   } catch (err) {
     console.error(
       "failed to poll articles from wikipedia. will try the same job again",
       wikiQueryJob
     );
-    await addQueryJobToQueue(wikiQueryJob, timeBetweenBatches);
+    await addQueryJobToQueue(wikiQueryJob);
   }
 };
 
@@ -177,13 +172,10 @@ const pollRouter = express.Router();
 pollRouter.post("/:searchTerm", async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
-    await addQueryJobToQueue(
-      {
-        searchTerm,
-        continueOffset: 0,
-      },
-      0
-    );
+    handleWikiQueryJob({
+      searchTerm,
+      continueOffset: 0,
+    });
     const info = {
       searchTerm,
     };

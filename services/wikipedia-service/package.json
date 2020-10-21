@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "ioredis": "^4.17.3",
     "mongoose": "^5.10.7",
+    "sqs-consumer": "^5.4.0",
     "ts-node-dev": "^1.0.0-pre.63",
     "typescript": "^4.0.3"
   }

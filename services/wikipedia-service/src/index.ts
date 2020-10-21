@@ -1,19 +1,20 @@
 import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
-  aspectoAuth: process.env.ASPECTO_AUTH ?? 'e97d7a26-db48-4afd-bba2-be4d453047eb',
+  aspectoAuth:
+    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
   local: true,
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
 });
 import { SQS } from "aws-sdk";
+import { Consumer } from "sqs-consumer";
 import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 import axios from "axios";
 import Redis from "ioredis";
 
-let queueUrl;
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
 });
@@ -23,54 +24,9 @@ const redis = new Redis("redis");
 const articleSchema = new mongoose.Schema({
   title: { type: String },
   pageId: { type: Number },
-  rating: { type: Number, required: false }
+  rating: { type: Number, required: false },
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
-
-const handleSqsBatch = async () => {
-  const res = await sqs
-    .receiveMessage({
-      QueueUrl: queueUrl,
-      MaxNumberOfMessages: 2,
-      WaitTimeSeconds: 20,
-    })
-    .promise();
-
-  if (!res.Messages) return;
-
-  // process messages
-  res.Messages.forEach((m) => {
-    const {title, pageId} = JSON.parse(m.Body);
-    console.log("processing new article from sqs", {title, pageId});
-    const article = new ArticleModel({title, pageId});
-    article.save();
-  });
-
-  await Promise.all(
-    res.Messages.map((m) =>
-      sqs
-        .deleteMessage({
-          QueueUrl: queueUrl,
-          ReceiptHandle: m.ReceiptHandle,
-        })
-        .promise()
-    )
-  );
-};
-
-const sqsProcessingLoop = async () => {
-  while (true) {
-    try {
-      await handleSqsBatch();
-    } catch (e) {
-      console.warn(
-        "failed to process message from sqs, will try again soon",
-        e
-      );
-    }
-    await new Promise((resolve) => setTimeout(resolve, 10 * 1000));
-  }
-};
 
 const app = express();
 app.use(cors());
@@ -147,35 +103,34 @@ articlesRouter.get("/:id", async (req, res) => {
 articlesRouter.post("/:id/rating", async (req, res) => {
   const articleId = req.params.id;
   try {
-    const {rating} = req.body;
+    const { rating } = req.body;
     console.log("post request to set rating on article", { articleId, rating });
-    if(rating === undefined) {
+    if (rating === undefined) {
       res.status(400).send("no rating is set in request body");
       return;
     }
-    await ArticleModel.updateOne({ _id: articleId }, {rating});
+    await ArticleModel.updateOne({ _id: articleId }, { rating });
     await redis.del(articleId);
     res.sendStatus(200);
-  } catch(err) {
-    console.error("failed to set rating for article", {articleId});
+  } catch (err) {
+    console.error("failed to set rating for article", { articleId });
     res.sendStatus(500);
   }
 });
 
-
 app.use("/article", articlesRouter);
 
-const initSqs = async () => {
+const initSqs = async (): Promise<string> => {
   const queueName = "new-wiki-article";
   try {
-    console.log('will try to create sqs queue', {queueName});
+    console.log("will try to create sqs queue", { queueName });
     const res = await sqs
       .createQueue({
         QueueName: queueName,
       })
       .promise();
-    queueUrl = res.QueueUrl;
-    console.log("sqs receive queue ready", { queueUrl });
+    console.log("sqs receive queue ready", { queueUrl: res.QueueUrl });
+    return res.QueueUrl;
   } catch (err) {
     console.error("failed to create sqs queue", { queueName });
     throw err;
@@ -183,10 +138,10 @@ const initSqs = async () => {
 };
 
 const connectToMongo = async () => {
-  console.log('attempting to connect to mongodb');
+  console.log("attempting to connect to mongodb");
   await mongoose.connect("mongodb://db/aspecto-demo");
-  console.log('mongo db connected');
-}
+  console.log("mongo db connected");
+};
 
 const initServer = async () => {
   await connectToMongo();
@@ -195,9 +150,24 @@ const initServer = async () => {
 };
 
 const initProcessor = async () => {
-  await Promise.all([connectToMongo(), initSqs()]);
+  const [_, queueUrl] = await Promise.all([connectToMongo(), initSqs()]);
   console.log("wikipedia service started in mode processor");
-  sqsProcessingLoop();
+
+  const sqsConsumer = Consumer.create({
+    queueUrl,
+    batchSize: 2,
+    waitTimeSeconds: 20,
+    pollingWaitTimeMs: 10000,
+    handleMessage: async (message) => {
+      const { title, pageId } = JSON.parse(message.Body);
+      console.log("processing new article from sqs", { title, pageId });
+      const article = new ArticleModel({ title, pageId });
+      await article.save();
+    },
+  });
+  sqsConsumer.on("error", (err) => console.error(err.message));
+  sqsConsumer.on("processing_error", (err) => console.error(err.message));
+  sqsConsumer.start();
 };
 
 console.log(`service in mode ${process.env.MODE}`);
