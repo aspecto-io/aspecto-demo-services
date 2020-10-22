@@ -158,7 +158,7 @@ app.use(async (req, res, next) => {
     const { token } = req.query;
     if (token) {
       const userResponse = await axios({
-        url: `http://user:8080/user/token?token=${token}`,
+        url: `http://user-service:8080/user/token?token=${token}`,
       });
       if (userResponse.data) {
         res.locals.user = userResponse.data;

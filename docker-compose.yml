@@ -3,6 +3,7 @@ version: "3.8"
 services:
   ui:
     build: ./app
+    image: aspectodemo/ui
     stdin_open: true
     volumes:
       - "./app/src:/usr/src/app/src"
@@ -13,8 +14,9 @@ services:
   db:
     image: mongo
 
-  user:
+  user-service:
     build: "./services/user-service"
+    image: aspectodemo/user-service
     volumes:
       - "./services/user-service/src:/usr/src/app/src"
     ports:
@@ -27,6 +29,7 @@ services:
 
   scraper-service:
     build: "./services/scraper-service"
+    image: aspectodemo/scraper-service
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
     environment:
@@ -42,6 +45,7 @@ services:
 
   wikipedia-processor:
     build: "./services/wikipedia-service"
+    image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     environment:
@@ -57,6 +61,7 @@ services:
 
   wikipedia-server:
     build: "./services/wikipedia-service"
+    image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     ports:
