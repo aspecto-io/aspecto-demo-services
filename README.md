@@ -45,7 +45,7 @@ wikipedia-service_1  | | 🕵️‍♀️ See the live tracing stream at https:/
 wikipedia-service_1  | |                                                                                                                                  |
 wikipedia-service_1  | ====================================================================================================================================
 ```
-5. Browse http://localhost:3000/ and play with the system. The demo email is: `aspecto-io/aspecto-demo-services` and demo password is: `Aspecto123`.
+5. Browse http://localhost:3000/ and play with the system. The demo email is: `wikipedia-demo@aspecto.io` and demo password is: `Aspecto123`.
 
 examine the live traces generated in aspecto website. You can also open postman, load the collection `aspecto-demo-services.postman_collection.json` from this repository main directory, and send requests.
 
