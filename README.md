@@ -9,8 +9,7 @@ It is composed of the following infra services:
     * Register new users to the system
 - Scraper:
     * Expose api to create new scraping jobs
-    * Handle scraping jobs from sqs and write new jobs to that queue.
-    * Access the wikipedia public api to search for articles with specific text, and push the result to simple pipeline sqs queue in batches for processing.
+    * Access the wikipedia public api to search for articles with specific text, and push the result to simple pipeline sqs queue for processing.
 - Wikipedia Service:
     * In PROCESSING mode - fetch wikipedia article data from the pipeline, and store it in db.
     * In SERVER mode - expose http api for users to query and modified the articles data
@@ -21,6 +20,8 @@ It is composed of the following infra services:
     * Cache for fast retrieval of article data which was fetched lately
 - AWS LocalStack:
     * sqs queue for transferring data between scraper and wikipedia service processor.
+
+![alt text](demo-service-overview.png)
 
 ## How to Run
 1. `git clone` the project locally
