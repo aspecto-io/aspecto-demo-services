@@ -9,35 +9,14 @@ import axios from "axios";
 import express from "express";
 import cors from "cors";
 import { SQS } from "aws-sdk";
-import { Consumer } from "sqs-consumer";
 
 // how many wiki pages to return in each batch (api call)
-const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 2;
-
-// how much time in seconds to wait between each batch query to wikipedia
-const timeBetweenBatches: number =
-  +process.env.TIME_BETWEEN_BATCHES_SECONDS || 60;
+const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
 let newArticlesQueueUrl;
-let wikiQueryJobQueueUrl;
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
 });
-
-interface WikiQueryJob {
-  searchTerm: string;
-  continueOffset: number;
-}
-
-const addQueryJobToQueue = async (wikiQueryJob: WikiQueryJob) => {
-  await sqs
-    .sendMessage({
-      QueueUrl: wikiQueryJobQueueUrl,
-      MessageBody: JSON.stringify(wikiQueryJob),
-      DelaySeconds: timeBetweenBatches,
-    })
-    .promise();
-};
 
 const createQueue = async (queueName): Promise<string> => {
   try {
@@ -58,72 +37,26 @@ const createQueue = async (queueName): Promise<string> => {
   }
 };
 
-const handleWikiQueryJob = async (wikiQueryJob: WikiQueryJob) => {
-  try {
-    const newContinueOffset = await pollWikipediaArticles(wikiQueryJob);
-    if (newContinueOffset === undefined) {
-      console.log("done polling all articles for search term", {
-        searchTerm: wikiQueryJob.searchTerm,
-      });
-      return;
-    }
-
-    if (newContinueOffset > 3 * batchSize) {
-      console.log("polled enough search results from wikipedia for searchTerm. stopping", {
-        searchTerm: wikiQueryJob.searchTerm,
-        totalArticles: newContinueOffset,
-      });
-      return;
-    }
-
-    console.log("registering job to poll next batch from wikipedia", {
-      timeBetweenBatches,
-      searchTerm: wikiQueryJob.searchTerm,
-    });
-    await addQueryJobToQueue({
-      searchTerm: wikiQueryJob.searchTerm,
-      continueOffset: newContinueOffset,
-    });
-  } catch (err) {
-    console.error(
-      "failed to poll articles from wikipedia. will try the same job again",
-      wikiQueryJob
-    );
-    await addQueryJobToQueue(wikiQueryJob);
-  }
-};
-
 const initSqs = async () => {
   newArticlesQueueUrl = await createQueue("new-wiki-article");
-  wikiQueryJobQueueUrl = await createQueue("wiki-query-job");
-
-  const sqsConsumer = Consumer.create({
-    queueUrl: wikiQueryJobQueueUrl,
-    pollingWaitTimeMs: 60000,
-    handleMessage: async (message) =>
-      handleWikiQueryJob(JSON.parse(message.Body)),
-  });
-  sqsConsumer.on("error", (err) => console.error(err.message));
-  sqsConsumer.on("processing_error", (err) => console.error(err.message));
-  sqsConsumer.start();
 };
 
 const pollWikipediaArticles = async (
-  wikiQueryJob: WikiQueryJob
+  searchTerm: string
 ): Promise<number> => {
   console.log("sending search query to wikipedia", {
-    wikiQueryJob,
+    searchTerm,
     batchSize,
   });
   const res = await axios.get("https://en.wikipedia.org/w/api.php", {
     params: {
       action: "query",
       list: "search",
-      srsearch: wikiQueryJob.searchTerm,
+      srsearch: searchTerm,
       srlimit: batchSize,
       srnamespace: 0, // search only articles
       format: "json",
-      sroffset: wikiQueryJob.continueOffset,
+      sroffset: 0,
     },
   });
 
@@ -180,10 +113,7 @@ const pollRouter = express.Router();
 pollRouter.post("/:searchTerm", async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
-    handleWikiQueryJob({
-      searchTerm,
-      continueOffset: 0,
-    });
+    await pollWikipediaArticles(searchTerm);
     const info = {
       searchTerm,
     };
