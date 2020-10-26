@@ -33,8 +33,7 @@ https://github.com/aspecto-io/aspecto-demo-services.git
 
 2. Run the following commands in terminal:
 ```
-docker-compose pull
-ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
+docker-compose pull && ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
 ```
 The pull command might take few minutes on first run.
 Docker compose will pull any missing images, run the services, and output logs to the console. 
