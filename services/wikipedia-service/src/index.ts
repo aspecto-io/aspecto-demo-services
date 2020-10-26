@@ -139,7 +139,11 @@ const initSqs = async (): Promise<string> => {
 
 const connectToMongo = async () => {
   console.log("attempting to connect to mongodb");
-  await mongoose.connect("mongodb://db/aspecto-demo");
+  await mongoose.connect("mongodb://db/aspecto-demo", {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useFindAndModify: true,
+  });
   console.log("mongo db connected");
 };
 
