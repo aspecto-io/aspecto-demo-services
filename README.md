@@ -24,18 +24,26 @@ It is composed of the following infra services:
 ![alt text](demo-service-overview.png)
 
 ## How to Run
+prerequisite: docker and docker-compose installed on the machine.
+
 1. `git clone` the project locally
-2. Open [Aspecto application](https://app.aspecto.io/) and login with email:
+```
+https://github.com/aspecto-io/aspecto-demo-services.git
+```
+
+2. Run the following commands in terminal:
+```
+docker-compose pull
+ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
+```
+The pull command might take few minutes on first run.
+Docker compose will pull any missing images, run the services, and output logs to the console. 
+
+3. Open [Aspecto application](https://app.aspecto.io/) and login with email:
 ```
 Email: wikipedia-demo@aspecto.io
 Password: Aspecto123
 ```
-3. Run the following command in terminal:
-```
-ASPECTO_GITHASH=$(git rev-parse HEAD) docker-compose up
-```
-This command might take few minutes on first run.
-Docker compose will pull and build any missing images, run the services, and output logs to the console. 
 
 4. Search the logs for a message with link to live flows; There are multiple links, one for each service. You can click any of them. The links looks like this:
 
