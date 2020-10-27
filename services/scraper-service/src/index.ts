@@ -41,9 +41,7 @@ const initSqs = async () => {
   newArticlesQueueUrl = await createQueue("new-wiki-article");
 };
 
-const pollWikipediaArticles = async (
-  searchTerm: string
-): Promise<number> => {
+const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   console.log("sending search query to wikipedia", {
     searchTerm,
     batchSize,
@@ -67,8 +65,9 @@ const pollWikipediaArticles = async (
   });
 
   await Promise.all(
-    res.data.query.search.map((article) =>
-      sqs
+    res.data.query.search.map((article) => {
+      console.log('sending wikipedia article to SQS queue for processing', {title: article.title});
+      return sqs
         .sendMessage({
           QueueUrl: newArticlesQueueUrl,
           MessageBody: JSON.stringify({
@@ -76,8 +75,8 @@ const pollWikipediaArticles = async (
             pageId: article.pageid,
           }),
         })
-        .promise()
-    )
+        .promise();
+    })
   );
 
   const continueOffset = res.data.continue?.sroffset;
