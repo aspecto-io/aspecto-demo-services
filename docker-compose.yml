@@ -72,9 +72,9 @@ services:
       - ASPECTO_GITHASH
     depends_on:
       - db
-      - redis
+      - articles-cache
 
-  redis:
+  articles-cache:
     image: redis
     ports:
       - 6379

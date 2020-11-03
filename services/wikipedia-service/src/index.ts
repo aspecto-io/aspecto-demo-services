@@ -19,7 +19,7 @@ const sqs = new SQS({
   endpoint: "http://localstack:4566",
 });
 
-const redis = new Redis("redis");
+const redis = new Redis("articles-cache");
 
 const articleSchema = new mongoose.Schema({
   title: { type: String },
