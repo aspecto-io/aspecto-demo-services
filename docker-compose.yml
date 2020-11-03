@@ -9,7 +9,7 @@ services:
       - "./app/src:/usr/src/app/src"
       - "./app/public:/usr/src/app/public"
     ports:
-      - "3000:3000"
+      - "3002:3000"
 
   db:
     image: mongo
