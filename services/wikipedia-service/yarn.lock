@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@aspecto/opentelemetry-base@^0.0.74":
-  version "0.0.74"
-  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-base/-/opentelemetry-base-0.0.74.tgz#c5cda6b367221b7f573c49221a964f9808c81fb6"
-  integrity sha512-8+4MrwMXJM5Us8GeOZKIlptfwB4BGOyoK3C9drYd8Y6VhoeSTz9+7vSxOyDqmVNberwb4zMIfvB8NzTATakb+w==
+"@aspecto/opentelemetry-base@^0.0.77":
+  version "0.0.77"
+  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-base/-/opentelemetry-base-0.0.77.tgz#6607b2fd05e3ada47c0cf87bcc91b8ac1fa3d175"
+  integrity sha512-wEknXWylM4CwKr9puwCKppV2PA9LKT01eOOsN2TfmBkx6NL0QytMjy+2uw4VOJq8vJMEHXxqOo6ERGQpiZp6ig==
 
-"@aspecto/opentelemetry-exporter-live@^0.0.74":
-  version "0.0.74"
-  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-exporter-live/-/opentelemetry-exporter-live-0.0.74.tgz#8a6c4a023eccac0043c5afc6007a1f8142b0cb30"
-  integrity sha512-Efg/GFN748ZSH/CMR8vYVhgxZIbtI4c3tCvgbEi8EmGg2Y1mQ+RJ7HWGykC60wg2E35IVieFGYO91WLfHyvUYw==
+"@aspecto/opentelemetry-exporter-live@^0.0.77":
+  version "0.0.77"
+  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-exporter-live/-/opentelemetry-exporter-live-0.0.77.tgz#60aa7bd6f234db89a8ec1e7e160af819aaa15ebd"
+  integrity sha512-Mc3FAeDSPez23rN08aTZNd+M3l2a+Qz4YH3vJMwJ0kdAHAuVZ5WNyZBjtBKh1NChcZg4F8riVmkIo39nnzfeGQ==
   dependencies:
     "@opentelemetry/core" "0.12.0"
     "@types/socket.io" "^2.1.8"
@@ -27,23 +27,24 @@
     socket.io-client "^2.3.0"
     uuid "^8.2.0"
 
-"@aspecto/opentelemetry-plugin-express@^0.0.74":
-  version "0.0.74"
-  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-plugin-express/-/opentelemetry-plugin-express-0.0.74.tgz#d26a51c8959c1495d2d065f56dac8366b85483e5"
-  integrity sha512-nAJB+MN/FedIYlS7LQw4qqrE5QilUqK5NFzgXGtXH8dSkDui4F/QyiG+1vHo9SJGQ+RLW6fVT4xysULF0fmBbg==
+"@aspecto/opentelemetry-plugin-express@^0.0.77":
+  version "0.0.77"
+  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry-plugin-express/-/opentelemetry-plugin-express-0.0.77.tgz#5726e78f31bca496fcd1b17f4e9afa4c49aa2508"
+  integrity sha512-EW+1P8sCb2kXZpLkLsbpv3QL9cX+5z7CfFvnj4em5mKjCdjLN/c+MPPNFEWRa8sVz37DNBn7MDST9eKliqRZJg==
   dependencies:
-    "@aspecto/opentelemetry-base" "^0.0.74"
+    "@aspecto/opentelemetry-base" "^0.0.77"
     "@opentelemetry/semantic-conventions" "0.12.0"
     shimmer "^1.2.1"
 
-"@aspecto/opentelemetry@^0.0.74":
-  version "0.0.74"
-  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry/-/opentelemetry-0.0.74.tgz#e87ae6975f94fa4cdea67be4b1cc208ab012b492"
-  integrity sha512-JPw6hSM3jVD6cE7+TPIoxe24NnMJpvxvGXdqY7tt6DOwQvNzk+orLLG6lvW04DACquDS0Y+zMK7Mc5IVJwp/CA==
+"@aspecto/opentelemetry@^0.0.77":
+  version "0.0.77"
+  resolved "https://registry.yarnpkg.com/@aspecto/opentelemetry/-/opentelemetry-0.0.77.tgz#52caa631baa0cd1a7cb315264924fc88e5b11e4a"
+  integrity sha512-yhBfpdZCG0fc+gjqJGsJhi0ULHXKpoyeNwTHNnUn+a++qVJuNZKtFDYCbx8G/MTEMtCjFQ8X7MmSMfSza0NdKQ==
   dependencies:
-    "@aspecto/opentelemetry-base" "^0.0.74"
-    "@aspecto/opentelemetry-exporter-live" "^0.0.74"
-    "@aspecto/opentelemetry-plugin-express" "^0.0.74"
+    "@aspecto/opentelemetry-base" "^0.0.77"
+    "@aspecto/opentelemetry-exporter-live" "^0.0.77"
+    "@aspecto/opentelemetry-plugin-express" "^0.0.77"
+    "@mzahor-test-org/plugin-ioredis" "^0.0.77"
     "@opentelemetry/api" "0.12.0"
     "@opentelemetry/context-async-hooks" "0.12.0"
     "@opentelemetry/core" "0.12.0"
@@ -53,15 +54,24 @@
     "@opentelemetry/node" "0.12.0"
     "@opentelemetry/plugin-http" "0.12.0"
     "@opentelemetry/plugin-https" "0.12.0"
-    "@opentelemetry/plugin-ioredis" "0.10.0"
     "@opentelemetry/tracing" "0.12.0"
     "@wdalmut/opentelemetry-plugin-mongoose" "0.2.3"
     opentelemetry-plugin-aws-sdk "0.0.13"
     opentelemetry-plugin-kafkajs "0.0.4"
-    opentelemetry-plugin-typeorm "0.0.2"
+    opentelemetry-plugin-sequelize "^0.0.1"
+    opentelemetry-plugin-typeorm "0.0.3"
     shimmer "1.2.1"
     socket.io-client "^2.3.1"
     uuid "^8.3.1"
+
+"@mzahor-test-org/plugin-ioredis@^0.0.77":
+  version "0.0.77"
+  resolved "https://registry.yarnpkg.com/@mzahor-test-org/plugin-ioredis/-/plugin-ioredis-0.0.77.tgz#841cce59dd8d79c5f1a2d679799be43aae8e8743"
+  integrity sha512-aFvSU/ZqCn1a/nFX/oXaansRkLkN3S7iK/TJS8FfwR4mNCIIvWgvfvCcxRAbPUSShlEKnHGNSKhUmH2Gz+aoNQ==
+  dependencies:
+    "@opentelemetry/api" "^0.12.0"
+    "@opentelemetry/core" "^0.12.0"
+    shimmer "^1.2.1"
 
 "@opentelemetry/api@0.12.0", "@opentelemetry/api@^0.12.0":
   version "0.12.0"
@@ -218,15 +228,6 @@
     "@opentelemetry/plugin-http" "^0.12.0"
     "@opentelemetry/semantic-conventions" "^0.12.0"
     semver "^7.1.3"
-    shimmer "^1.2.1"
-
-"@opentelemetry/plugin-ioredis@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@opentelemetry/plugin-ioredis/-/plugin-ioredis-0.10.0.tgz#9c5b9b35b54acbe76c638daa7f5eafb838cde43e"
-  integrity sha512-DYXdVZjcGNQ05G/wnRogVC3M31K3hjlJISKSHUJYw+QZnYpA3MafrQboYyglhsWPgJCAnNU2aUJgQjDDv9BpVQ==
-  dependencies:
-    "@opentelemetry/api" "^0.11.0"
-    "@opentelemetry/core" "^0.11.0"
     shimmer "^1.2.1"
 
 "@opentelemetry/resources@^0.12.0":
@@ -1501,10 +1502,19 @@ opentelemetry-plugin-kafkajs@0.0.4:
     "@opentelemetry/core" "^0.8.3"
     shimmer "^1.2.1"
 
-opentelemetry-plugin-typeorm@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/opentelemetry-plugin-typeorm/-/opentelemetry-plugin-typeorm-0.0.2.tgz#9c385e010a1897951a2cf0a52c5e27cf5454a5e3"
-  integrity sha512-76ZiXT92CIeutcFYTLK8HvclSlh7Sw1Ul/VYQEeGTqqyNm/zCWbmzZaPzGAjXkBB+LWxtDXYPMYexAvOElHUKA==
+opentelemetry-plugin-sequelize@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/opentelemetry-plugin-sequelize/-/opentelemetry-plugin-sequelize-0.0.1.tgz#efeb132b81f519c8966bb5b8f0ef5334dc7d6855"
+  integrity sha512-6+oAEQlOIsrY6zKsg8dpi7LrHfg23JOPrkQylG/qbhRsrH1YuHMIIDuNLiv+2FFP24NegiGaX1AZ3+E1s/rSdA==
+  dependencies:
+    "@opentelemetry/core" "^0.12.0"
+    "@opentelemetry/semantic-conventions" "^0.12.0"
+    shimmer "^1.2.1"
+
+opentelemetry-plugin-typeorm@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/opentelemetry-plugin-typeorm/-/opentelemetry-plugin-typeorm-0.0.3.tgz#f34da4093b53576dca27200ccdb40bb1999985ed"
+  integrity sha512-cvgnES4Jaqp+jv5zDZg9oSA9veMeke/5uOZWdqJyZBVdgbGiAGslP0Silp4xwDqu0TsV8p69REUj3eRGE71fsQ==
   dependencies:
     "@opentelemetry/core" "^0.11.0"
     "@opentelemetry/semantic-conventions" "^0.11.0"
