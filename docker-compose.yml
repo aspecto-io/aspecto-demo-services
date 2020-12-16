@@ -79,6 +79,7 @@ services:
       - articles-cache
 
   articles-cache:
+  
     image: redis
     ports:
       - 6379
