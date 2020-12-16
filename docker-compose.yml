@@ -24,6 +24,7 @@ services:
     environment:
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - NODE_ENV=production
     depends_on:
       - db
 
@@ -38,6 +39,7 @@ services:
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+      - NODE_ENV=production
     ports:
       - "8001:8080"
     depends_on:
@@ -55,6 +57,7 @@ services:
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+      - NODE_ENV=production
     depends_on:
       - localstack
       - db
@@ -70,6 +73,7 @@ services:
       - MODE=SERVER
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - NODE_ENV=production
     depends_on:
       - db
       - articles-cache

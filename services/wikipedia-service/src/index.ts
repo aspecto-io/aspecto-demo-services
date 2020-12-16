@@ -90,9 +90,9 @@ articlesRouter.get("/:id", async (req, res) => {
     const article = await ArticleModel.findOne({ _id: articleId });
     if (!article) res.sendStatus(404);
     else {
-      console.log("article found in mongodb. storing it in redis");
-      redis.set(article._id, JSON.stringify(article));
       res.json(article);
+      console.log("article found in mongodb. storing it in redis");
+      redis.set(article._id, JSON.stringify({data:article}));
     }
   } catch (e) {
     console.error("failed to get article", { articleId: articleId }, e);

@@ -12,6 +12,7 @@ import { SQS } from "aws-sdk";
 
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
+process.env.NODE_ENV
 
 let newArticlesQueueUrl;
 const sqs = new SQS({
