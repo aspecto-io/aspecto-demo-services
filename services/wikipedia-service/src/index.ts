@@ -2,7 +2,7 @@ import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: true,
+  local: false,
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
 });

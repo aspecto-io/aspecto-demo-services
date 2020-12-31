@@ -2,12 +2,12 @@ import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: true,
+  local: false,
   logger: console,
 });
 import axios from "axios";
 import express from "express";
-import cors from "cors";
+import cors from "cors"; 
 import { SQS } from "aws-sdk";
 
 // how many wiki pages to return in each batch (api call)
