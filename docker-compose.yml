@@ -23,6 +23,7 @@ services:
       - "8000:8080"
     environment:
       - ASPECTO_AUTH
+      - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
     depends_on:
       - db
@@ -34,6 +35,7 @@ services:
       - "./services/scraper-service/src:/usr/src/app/src"
     environment:
       - ASPECTO_AUTH
+      - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
@@ -50,6 +52,7 @@ services:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     environment:
       - MODE=PROCESSOR
+      - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
       - AWS_REGION=us-east-1
@@ -68,6 +71,7 @@ services:
       - "8002:8080"
     environment:
       - MODE=SERVER
+      - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
     depends_on:
