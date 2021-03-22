@@ -164,9 +164,19 @@ const initProcessor = async () => {
     pollingWaitTimeMs: 10000,
     handleMessage: async (message) => {
       const { title, pageId } = JSON.parse(message.Body);
-      console.log("processing new article from sqs", { title, pageId });
-      const article = new ArticleModel({ title, pageId });
-      await article.save();
+      if (title === "Ethereum") {
+        // title = "στοιχεῖον";
+        // title = "Eτhereum"
+        // throw new Error('Something went wrong saving')
+        console.log("processing new article from sqs", { title, pageId });
+        const article = new ArticleModel({ title: "Eτhereum", pageId });
+        await article.save();
+      }
+      else {
+        console.log("processing new article from sqs", { title, pageId });
+        const article = new ArticleModel({ title, pageId });
+        await article.save();
+      }
     },
   });
   sqsConsumer.on("error", (err) => console.error(err.message));

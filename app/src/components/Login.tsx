@@ -40,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login: React.FC<Props> = ({ setUser }) => {
-  const [email, setEmail] = React.useState<string>("");
-  const [password, setPassword] = React.useState<string>("");
+  const [email, setEmail] = React.useState<string>("wikipedia-demo@aspecto.io");
+  const [password, setPassword] = React.useState<string>("Aspecto123");
   const [error, setError] = React.useState<string>();
 
   const classes = useStyles();
