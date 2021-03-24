@@ -2,7 +2,7 @@ import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: true,
+  local: process.env.NODE_ENV !== 'production',
   logger: console,
 });
 
