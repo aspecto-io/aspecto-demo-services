@@ -164,12 +164,12 @@ const initProcessor = async () => {
     pollingWaitTimeMs: 10000,
     handleMessage: async (message) => {
       const { title, pageId } = JSON.parse(message.Body);
-      if (title === "Ethereum") {
-        // title = "στοιχεῖον";
-        // title = "Eτhereum"
-        // throw new Error('Something went wrong saving')
+      if (title === "Bitcoin") {
+        // title = “στοιχεῖον“;
+        // title = “Eτhereum”
+        // throw new Error(‘Something went wrong saving’)
         console.log("processing new article from sqs", { title, pageId });
-        const article = new ArticleModel({ title: "Eτhereum", pageId });
+        const article = new ArticleModel({ title: "Noodle", pageId });
         await article.save();
       }
       else {
