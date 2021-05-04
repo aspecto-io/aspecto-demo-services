@@ -131,6 +131,9 @@ const SearchResults = () => {
             >
               View on Wikipedia
             </Link>
+            <div>
+              Summary: 
+            </div>
           </div>
           <div>
             <Typography>Set your rating for this article:</Typography>{" "}

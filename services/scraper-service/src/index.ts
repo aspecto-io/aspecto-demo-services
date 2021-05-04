@@ -55,6 +55,9 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
       srnamespace: 0, // search only articles
       format: "json",
       sroffset: 0,
+      prop:"pageimages",
+      // formatversion:2,
+      pilicense:"any"
     },
   });
 
@@ -73,6 +76,9 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
           MessageBody: JSON.stringify({
             title: article.title,
             pageId: article.pageid,
+            // snippet: article.snippet,
+            imgUrl: article.original.source,
+            
           }),
         })
         .promise();
