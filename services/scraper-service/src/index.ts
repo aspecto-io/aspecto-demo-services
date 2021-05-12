@@ -2,23 +2,23 @@ import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== 'production',
+  local: process.env.NODE_ENV !== "production",
   logger: console,
 });
 import axios from "axios";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { SQS } from "aws-sdk";
 
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
-let newArticlesQueueUrl;
+let newArticlesQueueUrl: string;
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
 });
 
-const createQueue = async (queueName): Promise<string> => {
+const createQueue = async (queueName: string): Promise<string> => {
   try {
     console.log("will create an sqs queue", { queueName });
     const newArticleQueueRes = await sqs
@@ -65,8 +65,10 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   });
 
   await Promise.all(
-    res.data.query.search.map((article) => {
-      console.log('sending wikipedia article to SQS queue for processing', {title: article.title});
+    res.data.query.search.map((article: any) => {
+      console.log("sending wikipedia article to SQS queue for processing", {
+        title: article.title,
+      });
       return sqs
         .sendMessage({
           QueueUrl: newArticlesQueueUrl,
@@ -83,47 +85,37 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   return continueOffset;
 };
 
-const app = express();
-app.use(cors());
-app.use(async (req, res, next) => {
-  try {
-    const { token } = req.query;
-    if (token) {
+const app = express()
+  .use(cors())
+  .use(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.query;
+      if (!token) return res.sendStatus(401);
       const userResponse = await axios({
         url: `http://user-service:8080/user/token?token=${token}`,
       });
-      if (userResponse.data) {
-        res.locals.user = userResponse.data;
-        next();
-      } else {
-        res.sendStatus(401);
-      }
-    } else {
-      res.sendStatus(401);
+      if (!userResponse.data) return res.sendStatus(401);
+
+      res.locals.user = userResponse.data;
+      next();
+    } catch (e) {
+      console.error(e.message, e);
+      res.sendStatus(500);
     }
-  } catch (e) {
-    console.error(e.message, e);
-    res.sendStatus(500);
-  }
-});
-
-const pollRouter = express.Router();
-
-pollRouter.post("/:searchTerm", async (req, res) => {
-  const searchTerm = req.params.searchTerm;
-  try {
-    await pollWikipediaArticles(searchTerm);
-    const info = {
-      searchTerm,
-    };
-    res.status(200).send(info);
-  } catch (e) {
-    console.error("failed to poll articles batch from wikipedia", e);
-    res.status(500);
-  }
-});
-
-app.use("/poll", pollRouter);
+  })
+  .post("/:searchTerm", async (req: Request, res: Response) => {
+    const searchTerm = req.params.searchTerm;
+    try {
+      await pollWikipediaArticles(searchTerm);
+      const info = {
+        searchTerm,
+      };
+      res.status(200).send(info);
+    } catch (e) {
+      console.error("failed to poll articles batch from wikipedia", e);
+      res.sendStatus(500);
+    }
+  });
 
 (async () => {
   try {
