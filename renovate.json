@@ -1,5 +1,16 @@
 {
-  "extends": [
-    "config:base"
+  "extends": ["config:base"],
+  "packageRules": [
+      {
+          "packagePatterns": ["*"],
+          "excludePackagePatterns": ["@aspecto/opentelemetry"],
+          "enabled": false
+      },
+      {
+          "packageNames": ["@aspecto/opentelemetry"],
+          "enabled": true,
+          "updateTypes": ["minor", "patch", "pin", "digest"],
+          "automerge": false
+      }
   ]
 }
