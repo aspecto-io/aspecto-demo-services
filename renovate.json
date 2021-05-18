@@ -10,7 +10,7 @@
           "packageNames": ["@aspecto/opentelemetry"],
           "enabled": true,
           "updateTypes": ["minor", "patch", "pin", "digest"],
-          "automerge": false
+          "automerge": true
       }
   ]
 }
