@@ -16,8 +16,8 @@ const Scraper = () => {
   const startScraping = async (event: any) => {
     event.preventDefault();
     axios
-      .post(`http://localhost:8001/poll/${searchTerm}?token=${user.token}`)
-      .then((res) => {
+      .post(`http://localhost:8001/${searchTerm}?token=${user.token}`)
+      .then(() => {
           setSearchTerm("");
           setActionResult(`Successfully started scraping wikipedia for term "${searchTerm}"`);
         })

@@ -8,17 +8,16 @@
 		{
 			"name": "poll single batch from wikipedia for articles with text 'nodejs'",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8001/poll/nodejs?token=123456",
+					"raw": "http://localhost:8001/nodejs?token=123456",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8001",
 					"path": [
-						"poll",
 						"nodejs"
 					],
 					"query": [
@@ -34,17 +33,16 @@
 		{
 			"name": "another batch poll for wikipedia articles",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8001/poll/nodejs?token=123456",
+					"raw": "http://localhost:8001/nodejs?token=123456",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8001",
 					"path": [
-						"poll",
 						"nodejs"
 					],
 					"query": [
