@@ -8,17 +8,21 @@ services:
     volumes:
       - "./app/src:/usr/src/app/src"
       - "./app/public:/usr/src/app/public"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "3002:3000"
 
   db:
     image: mongo
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
   user-service:
     build: "./services/user-service"
     image: aspectodemo/user-service
     volumes:
       - "./services/user-service/src:/usr/src/app/src"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "8000:8080"
     environment:
@@ -33,6 +37,7 @@ services:
     image: aspectodemo/scraper-service
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
@@ -50,6 +55,7 @@ services:
     image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - MODE=PROCESSOR
       - ASPECTO_LIVE_FLOWS_URL
@@ -67,6 +73,7 @@ services:
     image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "8002:8080"
     environment:
@@ -80,6 +87,8 @@ services:
 
   articles-cache:
     image: redis
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - 6379
     expose:
@@ -90,6 +99,8 @@ services:
     ports:
       - "4566:4566"
       - "4571:4571"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEFAULT_REGION=us-east-1
       - SERVICES=sqs
