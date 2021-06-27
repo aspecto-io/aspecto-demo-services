@@ -29,6 +29,7 @@ services:
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
+      - ASPECTO_IS_CI
     depends_on:
       - db
 

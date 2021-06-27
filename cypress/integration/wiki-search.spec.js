@@ -5,6 +5,6 @@ describe('aspecto wiki demo', () => {
 
         cy.get('#email').type('wikipedia-demo@aspecto.io');
         cy.get('#password').type('Aspecto123');
-        cy.get('button').click(); 
-    })
+        cy.get('button').click();
+    });
 });
