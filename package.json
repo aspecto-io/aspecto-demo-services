@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "cypress:open": "cypress open",
-    "start": "docker-compose down && docker-compose up -d && wait-on http://localhost:3002 && echo done",
+    "start": "docker-compose down && docker-compose up -d",
     "build": "docker-compose build --parallel",
     "start:dev": "yarn start && docker-compose logs -f",
     "build:dev": "docker-compose down && docker-compose up -d --build && docker-compose logs -f"
