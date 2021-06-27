@@ -17,4 +17,4 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: yarn build
-          start: yarn start && sleep 10s    
+          start: yarn start & wait-on http://localhost:3002
