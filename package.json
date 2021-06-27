@@ -5,7 +5,13 @@
   "author": "Michael Haberman <michael@aspecto.io>",
   "license": "MIT",
   "scripts": {
-    "start": "docker-compose down && docker-compose up -d && docker-compose logs -f",
-    "build": "docker-compose down && docker-compose up -d --build && docker-compose logs -f"
+    "cypress:open": "cypress open",
+    "start": "docker-compose down && docker-compose up -d",
+    "build": "docker-compose build --parallel",
+    "start:dev": "yarn start && docker-compose logs -f",
+    "build:dev": "docker-compose down && docker-compose up -d --build && docker-compose logs -f"
+  },
+  "devDependencies": {
+    "cypress": "^7.6.0"
   }
 }
