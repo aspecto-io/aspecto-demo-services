@@ -17,5 +17,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: yarn build
-          start: ASPECTO_IS_CI=1 yarn start
+          start: yarn start
           wait-on: 'http://localhost:3002'
+        env:
+          ASPECTO_IS_CI=1
+          
