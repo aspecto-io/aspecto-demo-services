@@ -9,7 +9,8 @@
     "start": "docker-compose down && docker-compose up -d",
     "build": "docker-compose build --parallel",
     "start:dev": "yarn start && docker-compose logs -f",
-    "build:dev": "docker-compose down && docker-compose up -d --build && docker-compose logs -f"
+    "build:dev": "docker-compose down && docker-compose up -d --build && docker-compose logs -f",
+    "wait-for-ready": "yarn run wait-on http://localhost:3002"
   },
   "devDependencies": {
     "cypress": "^7.6.0",
