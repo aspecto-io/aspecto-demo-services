@@ -38,7 +38,6 @@ services:
     image: aspectodemo/scraper-service
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
@@ -56,7 +55,6 @@ services:
     image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - MODE=PROCESSOR
       - ASPECTO_LIVE_FLOWS_URL
@@ -74,7 +72,6 @@ services:
     image: aspectodemo/wikipedia-service
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "8002:8080"
     environment:
@@ -88,8 +85,6 @@ services:
 
   articles-cache:
     image: redis
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - 6379
     expose:
@@ -100,8 +95,6 @@ services:
     ports:
       - "4566:4566"
       - "4571:4571"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEFAULT_REGION=us-east-1
       - SERVICES=sqs
