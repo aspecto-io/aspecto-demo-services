@@ -8,23 +8,31 @@ services:
     volumes:
       - "./app/src:/usr/src/app/src"
       - "./app/public:/usr/src/app/public"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "3002:3000"
 
   db:
     image: mongo
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
   user-service:
     build: "./services/user-service"
     image: aspectodemo/user-service
     volumes:
       - "./services/user-service/src:/usr/src/app/src"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "8000:8080"
     environment:
+      - NODE_ENV
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
+      - ASPECTO_IS_CI
+      - GITHUB_HEAD_REF
+      - GITHUB_SHA
     depends_on:
       - db
 
@@ -34,9 +42,13 @@ services:
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
     environment:
+      - NODE_ENV
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
+      - ASPECTO_IS_CI
+      - GITHUB_HEAD_REF
+      - GITHUB_SHA
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
@@ -51,10 +63,14 @@ services:
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     environment:
+      - NODE_ENV
       - MODE=PROCESSOR
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - ASPECTO_IS_CI
+      - GITHUB_HEAD_REF
+      - GITHUB_SHA
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
@@ -70,10 +86,14 @@ services:
     ports:
       - "8002:8080"
     environment:
+      - NODE_ENV
       - MODE=SERVER
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - ASPECTO_IS_CI
+      - GITHUB_HEAD_REF
+      - GITHUB_SHA
     depends_on:
       - db
       - articles-cache
