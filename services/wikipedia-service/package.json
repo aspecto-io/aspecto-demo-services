@@ -8,7 +8,7 @@
     "start": "ts-node-dev --transpile-only ./src/index.ts"
   },
   "dependencies": {
-    "@aspecto/opentelemetry": "0.0.0-2021-06-29--15-16",
+    "@aspecto/opentelemetry": "0.0.119",
     "@types/express": "^4.17.9",
     "@types/ioredis": "^4.17.8",
     "@types/mongoose": "^5.10.3",
