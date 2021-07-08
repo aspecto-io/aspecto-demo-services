@@ -2,7 +2,7 @@ import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== 'production',
+  local: process.env.NODE_ENV !== "production",
   logger: console,
 });
 
@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import axios from "axios";
 
 let userModel: mongoose.Model<mongoose.Document, any>;
 
@@ -19,9 +20,9 @@ app.use(cors({}));
 
 app.post("/user/login", async (req, res) => {
   try {
+    const data = await axios.get("https://jsonplaceholder.typicode.com/todos");
     const { username, password } = req.body;
     const { fail } = req.query;
-
     console.log("trying to login user", { username, password });
     if (fail) {
       throw new Error(`Can't process your request`);
