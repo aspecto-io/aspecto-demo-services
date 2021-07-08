@@ -20,7 +20,8 @@ app.use(cors({}));
 
 app.post("/user/login", async (req, res) => {
   try {
-    const data = await axios.get("https://jsonplaceholder.typicode.com/todos/1");
+    await axios.get("https://jsonplaceholder.typicode.com/todos/1");
+    await axios.get("https://jsonplaceholder.typicode.com/todos/2");
     const { username, password } = req.body;
     const { fail } = req.query;
     console.log("trying to login user", { username, password });
