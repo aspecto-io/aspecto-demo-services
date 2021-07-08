@@ -46,6 +46,7 @@ services:
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
+      - ASPECTO_CI_REPORT
       - GITHUB_HEAD_REF
       - GITHUB_SHA
       - AWS_REGION=us-east-1
@@ -67,6 +68,7 @@ services:
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - ASPECTO_CI_REPORT
       - GITHUB_HEAD_REF
       - GITHUB_SHA
       - AWS_REGION=us-east-1
@@ -89,6 +91,7 @@ services:
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
       - ASPECTO_GITHASH
+      - ASPECTO_CI_REPORT
       - GITHUB_HEAD_REF
       - GITHUB_SHA
     depends_on:
