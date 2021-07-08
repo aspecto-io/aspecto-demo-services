@@ -10,8 +10,6 @@ import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import axios from "axios";
-
 let userModel: mongoose.Model<mongoose.Document, any>;
 
 const app = express();
