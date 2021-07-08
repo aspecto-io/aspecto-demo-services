@@ -29,7 +29,7 @@ app.post("/user/login", async (req, res) => {
       if (userModel) {
         const user = await userModel.findOne({ username, password });
         if (user) {
-          res.json(user);
+          res.json({foo: 'bar'});
         } else {
           res.sendStatus(404);
         }
