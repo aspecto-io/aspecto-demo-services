@@ -25,7 +25,11 @@ app.post("/user/login", async (req, res) => {
       throw new Error(`Can't process your request`);
     } else {
       if (userModel) {
-        const user = await userModel.findOne({ username, password });
+        let user;
+        for (let index = 0; index < 5; index++) {
+          user = await userModel.findOne({ username, password });
+          
+        }
         if (user) {
           res.json(user);
         } else {
