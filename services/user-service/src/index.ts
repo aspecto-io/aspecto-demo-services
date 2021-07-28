@@ -26,7 +26,7 @@ app.post("/user/login", async (req, res) => {
     } else {
       if (userModel) {
         let user;
-        for (let index = 0; index < 10; index++) {
+        for (let index = 0; index < 3; index++) {
           user = await userModel.findOne({ username, password });
           
         }
