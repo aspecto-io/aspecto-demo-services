@@ -26,6 +26,7 @@ services:
     ports:
       - "8000:8080"
     environment:
+      - LOCALSTACK=true
       - NODE_ENV
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
@@ -42,6 +43,7 @@ services:
     volumes:
       - "./services/scraper-service/src:/usr/src/app/src"
     environment:
+      - LOCALSTACK=true
       - NODE_ENV
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
@@ -62,6 +64,7 @@ services:
     volumes:
       - "./services/wikipedia-service/src:/usr/src/app/src"
     environment:
+      - LOCALSTACK=true
       - NODE_ENV
       - MODE=PROCESSOR
       - ASPECTO_LIVE_FLOWS_URL
@@ -84,6 +87,7 @@ services:
     ports:
       - "8002:8080"
     environment:
+      - LOCALSTACK=true
       - NODE_ENV
       - MODE=SERVER
       - ASPECTO_LIVE_FLOWS_URL

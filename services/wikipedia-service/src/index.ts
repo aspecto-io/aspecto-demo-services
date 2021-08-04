@@ -1,8 +1,8 @@
 import initAspecto from "@aspecto/opentelemetry";
 initAspecto({
   aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== 'production',
+    process.env.ASPECTO_AUTH ?? "331a7c4e-945a-4053-8f59-9964d555db9d",
+  local: process.env.NODE_ENV !== "production",
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
 });
@@ -16,7 +16,7 @@ import axios from "axios";
 import Redis from "ioredis";
 
 const sqs = new SQS({
-  endpoint: "http://localstack:4566",
+  endpoint: process.env.LOCALSTACK ? "http://localstack:4566" : undefined,
 });
 
 const redis = new Redis("articles-cache");
@@ -28,6 +28,14 @@ const articleSchema = new mongoose.Schema({
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
 
+const getServiceUrl = (serviceName: string) => {
+  const copilotServiceEndpoint = process.env.COPILOT_SERVICE_DISCOVERY_ENDPOINT;
+  if (copilotServiceEndpoint) {
+    return `://${serviceName}.${copilotServiceEndpoint}`;
+  }
+  return `://${serviceName}`;
+};
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -36,7 +44,7 @@ app.use(async (req, res, next) => {
     const { token } = req.query;
     if (token) {
       const userResponse = await axios({
-        url: `http://user-service:8080/user/token?token=${token}`,
+        url: `http${getServiceUrl("user-service")}:8080/user/token?token=${token}`,
       });
       if (userResponse.data) {
         res.locals.user = userResponse.data;
@@ -139,7 +147,7 @@ const initSqs = async (): Promise<string> => {
 
 const connectToMongo = async () => {
   console.log("attempting to connect to mongodb");
-  await mongoose.connect("mongodb://db/aspecto-demo", {
+  await mongoose.connect(`mongodb${getServiceUrl("db")}/aspecto-demo`, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: true,

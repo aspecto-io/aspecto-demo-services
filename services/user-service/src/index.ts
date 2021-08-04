@@ -1,7 +1,7 @@
 import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
+    process.env.ASPECTO_AUTH ?? "331a7c4e-945a-4053-8f59-9964d555db9d",
   local: process.env.NODE_ENV !== "production",
   logger: console,
 });
@@ -86,7 +86,14 @@ async function getDBModel() {
 
   const User = mongoose.model("Users", usersSchema);
 
-  await mongoose.connect("mongodb://db/aspecto-demo", {
+  const getServiceUrl = (serviceName: string) => {
+    const copilotServiceEndpoint = process.env.COPILOT_SERVICE_DISCOVERY_ENDPOINT;
+    if (copilotServiceEndpoint) {
+      return `mongodb://${serviceName}.${copilotServiceEndpoint}`;
+    }
+    return `mongodb://${serviceName}`;
+  };
+  await mongoose.connect(`${getServiceUrl("db")}/aspecto-demo', {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: true,

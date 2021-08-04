@@ -22,4 +22,4 @@ jobs:
           ASPECTO_CI_REPORT: 1
 
       - name: Notify Aspecto
-        run: curl https://ci-flows-analytics.aspecto.io/api/ci-status-webhook?token=e97d7a26-db48-4afd-bba2-be4d453047eb --data-urlencode commitId=$GITHUB_SHA --data-urlencode status=succeeded
+        run: curl https://ci-flows-analytics.aspecto.io/api/ci-status-webhook?token=331a7c4e-945a-4053-8f59-9964d555db9d --data-urlencode commitId=$GITHUB_SHA --data-urlencode status=succeeded

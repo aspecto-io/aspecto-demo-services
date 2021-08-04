@@ -1,7 +1,7 @@
 import init from "@aspecto/opentelemetry";
 init({
   aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
+    process.env.ASPECTO_AUTH ?? "331a7c4e-945a-4053-8f59-9964d555db9d",
   local: process.env.NODE_ENV !== "production",
   logger: console,
 });
@@ -15,7 +15,7 @@ const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
 let newArticlesQueueUrl: string;
 const sqs = new SQS({
-  endpoint: "http://localstack:4566",
+  endpoint: process.env.LOCALSTACK ? "http://localstack:4566" : undefined,
 });
 
 const createQueue = async (queueName: string): Promise<string> => {
@@ -85,6 +85,14 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   return continueOffset;
 };
 
+const getServiceUrl = (serviceName: string) => {
+  const copilotServiceEndpoint = process.env.COPILOT_SERVICE_DISCOVERY_ENDPOINT;
+  if (copilotServiceEndpoint) {
+    return `http://${serviceName}.${copilotServiceEndpoint}`;
+  }
+  return `http://${serviceName}`;
+};
+
 const app = express()
   .use(cors())
   .use(async (req: Request, res: Response, next: NextFunction) => {
@@ -92,7 +100,7 @@ const app = express()
       const { token } = req.query;
       if (!token) return res.sendStatus(401);
       const userResponse = await axios({
-        url: `http://user-service:8080/user/token?token=${token}`,
+        url: `${getServiceUrl("user-service")}:8080/user/token?token=${token}`,
       });
       if (!userResponse.data) return res.sendStatus(401);
 
@@ -102,6 +110,9 @@ const app = express()
       console.error(e.message, e);
       res.sendStatus(500);
     }
+  })
+  .get("/", (_req, res) => {
+    res.send("ok");
   })
   .post("/:searchTerm", async (req: Request, res: Response) => {
     const searchTerm = req.params.searchTerm;
