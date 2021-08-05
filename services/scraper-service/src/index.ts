@@ -38,7 +38,9 @@ const createQueue = async (queueName: string): Promise<string> => {
 };
 
 const initSqs = async () => {
-  newArticlesQueueUrl = await createQueue("new-wiki-article");
+  newArticlesQueueUrl = await Promise.resolve(
+    "https://sqs.eu-west-1.amazonaws.com/731241200085/demo-new-wiki-article"
+  );
 };
 
 const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
@@ -93,40 +95,41 @@ const getServiceUrl = (serviceName: string) => {
   return `http://${serviceName}`;
 };
 
-const app = express()
-  .use(cors())
-  .use(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { token } = req.query;
-      if (!token) return res.sendStatus(401);
-      const userResponse = await axios({
-        url: `${getServiceUrl("user-service")}:8080/user/token?token=${token}`,
-      });
-      if (!userResponse.data) return res.sendStatus(401);
+const middleware = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.query;
+    if (!token) return res.sendStatus(401);
+    const userResponse = await axios({
+      url: `${getServiceUrl("user-service")}:8080/user/token?token=${token}`,
+    });
+    if (!userResponse.data) return res.sendStatus(401);
 
-      res.locals.user = userResponse.data;
-      next();
-    } catch (e) {
-      console.error(e.message, e);
-      res.sendStatus(500);
-    }
-  })
-  .get("/", (_req, res) => {
-    res.send("ok");
-  })
-  .post("/:searchTerm", async (req: Request, res: Response) => {
-    const searchTerm = req.params.searchTerm;
-    try {
-      await pollWikipediaArticles(searchTerm);
-      const info = {
-        searchTerm,
-      };
-      res.status(200).send(info);
-    } catch (e) {
-      console.error("failed to poll articles batch from wikipedia", e);
-      res.sendStatus(500);
-    }
-  });
+    res.locals.user = userResponse.data;
+    next();
+  } catch (e) {
+    console.error(e.message, e);
+    res.sendStatus(500);
+  }
+};
+
+const app = express();
+app.use(cors());
+app.get("/", (_req, res) => {
+  res.send("ok");
+});
+app.post("/:searchTerm", middleware, async (req: Request, res: Response) => {
+  const searchTerm = req.params.searchTerm;
+  try {
+    await pollWikipediaArticles(searchTerm);
+    const info = {
+      searchTerm,
+    };
+    res.status(200).send(info);
+  } catch (e) {
+    console.error("failed to poll articles batch from wikipedia", e);
+    res.sendStatus(500);
+  }
+});
 
 (async () => {
   try {

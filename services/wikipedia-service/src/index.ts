@@ -44,7 +44,9 @@ app.use(async (req, res, next) => {
     const { token } = req.query;
     if (token) {
       const userResponse = await axios({
-        url: `http${getServiceUrl("user-service")}:8080/user/token?token=${token}`,
+        url: `http${getServiceUrl(
+          "user-service"
+        )}:8080/user/token?token=${token}`,
       });
       if (userResponse.data) {
         res.locals.user = userResponse.data;
@@ -162,11 +164,12 @@ const initServer = async () => {
 };
 
 const initProcessor = async () => {
-  const [_, queueUrl] = await Promise.all([connectToMongo(), initSqs()]);
+  await connectToMongo();
   console.log("wikipedia service started in mode processor");
 
   const sqsConsumer = Consumer.create({
-    queueUrl,
+    queueUrl:
+      "https://sqs.eu-west-1.amazonaws.com/731241200085/demo-new-wiki-article",
     batchSize: 2,
     waitTimeSeconds: 20,
     pollingWaitTimeMs: 10000,

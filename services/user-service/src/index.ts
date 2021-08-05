@@ -93,7 +93,7 @@ async function getDBModel() {
     }
     return `mongodb://${serviceName}`;
   };
-  await mongoose.connect(`${getServiceUrl("db")}/aspecto-demo', {
+  await mongoose.connect(`${getServiceUrl("db")}/aspecto-demo`, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: true,
