@@ -13,35 +13,9 @@ import { SQS } from "aws-sdk";
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
-let newArticlesQueueUrl: string;
-const sqs = new SQS({
-  endpoint: process.env.LOCALSTACK ? "http://localstack:4566" : undefined,
-});
-
-const createQueue = async (queueName: string): Promise<string> => {
-  try {
-    console.log("will create an sqs queue", { queueName });
-    const newArticleQueueRes = await sqs
-      .createQueue({
-        QueueName: queueName,
-      })
-      .promise();
-    console.log("queue is ready", {
-      queueUrl: newArticleQueueRes.QueueUrl,
-      queueName,
-    });
-    return newArticleQueueRes.QueueUrl;
-  } catch (err) {
-    console.error("failed to create sqs queue. exiting", { queueName });
-    throw err;
-  }
-};
-
-const initSqs = async () => {
-  newArticlesQueueUrl = await Promise.resolve(
-    "https://sqs.eu-west-1.amazonaws.com/731241200085/demo-new-wiki-article"
-  );
-};
+const newArticlesQueueUrl: string =
+  "https://sqs.eu-west-1.amazonaws.com/731241200085/demo-new-wiki-article";
+const sqs = new SQS();
 
 const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   console.log("sending search query to wikipedia", {
@@ -127,13 +101,12 @@ app.post("/:searchTerm", middleware, async (req: Request, res: Response) => {
     res.status(200).send(info);
   } catch (e) {
     console.error("failed to poll articles batch from wikipedia", e);
-    res.sendStatus(500);
+    res.status(500).send(e);
   }
 });
 
-(async () => {
+(() => {
   try {
-    await initSqs();
     app.listen(8080);
     console.log("wikipedia scraper started");
   } catch (e) {

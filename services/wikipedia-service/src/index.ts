@@ -6,7 +6,6 @@ initAspecto({
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
 });
-import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
 import mongoose from "mongoose";
 import express from "express";
@@ -14,10 +13,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import axios from "axios";
 import Redis from "ioredis";
-
-const sqs = new SQS({
-  endpoint: process.env.LOCALSTACK ? "http://localstack:4566" : undefined,
-});
 
 const redis = new Redis("articles-cache");
 
@@ -129,23 +124,6 @@ articlesRouter.post("/:id/rating", async (req, res) => {
 });
 
 app.use("/article", articlesRouter);
-
-const initSqs = async (): Promise<string> => {
-  const queueName = "new-wiki-article";
-  try {
-    console.log("will try to create sqs queue", { queueName });
-    const res = await sqs
-      .createQueue({
-        QueueName: queueName,
-      })
-      .promise();
-    console.log("sqs receive queue ready", { queueUrl: res.QueueUrl });
-    return res.QueueUrl;
-  } catch (err) {
-    console.error("failed to create sqs queue", { queueName });
-    throw err;
-  }
-};
 
 const connectToMongo = async () => {
   console.log("attempting to connect to mongodb");
