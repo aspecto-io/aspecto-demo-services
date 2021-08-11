@@ -19,7 +19,7 @@ const redis = new Redis("articles-cache");
 const articleSchema = new mongoose.Schema({
   title: { type: String },
   pageId: { type: Number },
-  rating: { type: Number, required: false },
+  rating: { type: Number, required: false }, 
 });
 const ArticleModel = mongoose.model("Article", articleSchema);
 
@@ -148,7 +148,7 @@ const initProcessor = async () => {
   const sqsConsumer = Consumer.create({
     queueUrl:
       "https://sqs.eu-west-1.amazonaws.com/731241200085/demo-new-wiki-article",
-    batchSize: 2,
+    batchSize: 10,
     waitTimeSeconds: 20,
     pollingWaitTimeMs: 10000,
     handleMessage: async (message) => {
