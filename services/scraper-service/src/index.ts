@@ -1,5 +1,6 @@
 import init from "@aspecto/opentelemetry";
 init({
+  otCollectorEndpoint: "http://test-Publi-RDISWA51NUHK-1284109068.eu-west-1.elb.amazonaws.com/v1/trace",
   aspectoAuth:
     process.env.ASPECTO_AUTH ?? "331a7c4e-945a-4053-8f59-9964d555db9d",
   local: process.env.NODE_ENV !== "production",
