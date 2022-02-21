@@ -44,6 +44,7 @@ services:
     environment:
       - NODE_ENV
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT
       - ASPECTO_AUTH
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_GITHASH
@@ -65,6 +66,7 @@ services:
     environment:
       - NODE_ENV
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT
       - MODE=PROCESSOR
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH
@@ -88,6 +90,7 @@ services:
     environment:
       - NODE_ENV
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT
       - MODE=SERVER
       - ASPECTO_LIVE_FLOWS_URL
       - ASPECTO_AUTH

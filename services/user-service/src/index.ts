@@ -5,6 +5,7 @@ init({
   local: process.env.NODE_ENV !== "production",
   logger: console,
   otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+  customZipkinEndpoint: process.env.OTEL_EXPORTER_ZIPKIN_ENDPOINT,  
 });
 
 import mongoose from "mongoose";
