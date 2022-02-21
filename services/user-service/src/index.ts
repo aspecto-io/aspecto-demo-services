@@ -4,6 +4,7 @@ init({
     process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
   local: process.env.NODE_ENV !== "production",
   logger: console,
+  otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
 });
 
 import mongoose from "mongoose";

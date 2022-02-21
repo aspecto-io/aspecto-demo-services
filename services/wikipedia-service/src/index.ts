@@ -5,6 +5,7 @@ initAspecto({
   local: process.env.NODE_ENV !== 'production',
   logger: console,
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
+  otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
 });
 import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
