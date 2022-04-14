@@ -1,66 +1,64 @@
-import init from "@aspecto/opentelemetry";
+import init from '@aspecto/opentelemetry';
 init({
   aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== "production",
-  logger: console,
-  otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+    process.env.ASPECTO_AUTH ?? 'e97d7a26-db48-4afd-bba2-be4d453047eb',
   customZipkinEndpoint: process.env.OTEL_EXPORTER_ZIPKIN_ENDPOINT,
+  logger: console,
 });
-import axios from "axios";
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
-import { SQS } from "aws-sdk";
+import axios from 'axios';
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import { SQS } from 'aws-sdk';
 
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
 let newArticlesQueueUrl: string;
 const sqs = new SQS({
-  endpoint: "http://localstack:4566",
+  endpoint: 'http://localstack:4566',
 });
 
 const createQueue = async (queueName: string): Promise<string> => {
   try {
-    console.log("will create an sqs queue", { queueName });
+    console.log('will create an sqs queue', { queueName });
     const newArticleQueueRes = await sqs
       .createQueue({
         QueueName: queueName,
       })
       .promise();
-    console.log("queue is ready", {
+    console.log('queue is ready', {
       queueUrl: newArticleQueueRes.QueueUrl,
       queueName,
     });
     return newArticleQueueRes.QueueUrl;
   } catch (err) {
-    console.error("failed to create sqs queue. exiting", { queueName });
+    console.error('failed to create sqs queue. exiting', { queueName });
     throw err;
   }
 };
 
 const initSqs = async () => {
-  newArticlesQueueUrl = await createQueue("new-wiki-article");
+  newArticlesQueueUrl = await createQueue('new-wiki-article');
 };
 
 const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
-  console.log("sending search query to wikipedia", {
+  console.log('sending search query to wikipedia', {
     searchTerm,
     batchSize,
   });
-  const res = await axios.get("https://en.wikipedia.org/w/api.php", {
+  const res = await axios.get('https://en.wikipedia.org/w/api.php', {
     params: {
-      action: "query",
-      list: "search",
+      action: 'query',
+      list: 'search',
       srsearch: searchTerm,
       srlimit: batchSize,
       srnamespace: 0, // search only articles
-      format: "json",
+      format: 'json',
       sroffset: 0,
     },
   });
 
-  console.log("wikipedia returned result for search", {
+  console.log('wikipedia returned result for search', {
     continueOffset: res.data?.continue?.sroffset,
     totalHits: res.data?.query?.searchinfo?.totalhits,
     currentBatchSize: res.data?.query?.search?.length,
@@ -68,7 +66,7 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
 
   await Promise.all(
     res.data.query.search.map((article: any) => {
-      console.log("sending wikipedia article to SQS queue for processing", {
+      console.log('sending wikipedia article to SQS queue for processing', {
         title: article.title,
       });
       return sqs
@@ -105,7 +103,7 @@ const app = express()
       res.sendStatus(500);
     }
   })
-  .post("/:searchTerm", async (req: Request, res: Response) => {
+  .post('/:searchTerm', async (req: Request, res: Response) => {
     const searchTerm = req.params.searchTerm;
     try {
       await pollWikipediaArticles(searchTerm);
@@ -114,7 +112,7 @@ const app = express()
       };
       res.status(200).send(info);
     } catch (e) {
-      console.error("failed to poll articles batch from wikipedia", e);
+      console.error('failed to poll articles batch from wikipedia', e);
       res.sendStatus(500);
     }
   });
@@ -123,8 +121,8 @@ const app = express()
   try {
     await initSqs();
     app.listen(8080);
-    console.log("wikipedia scraper started");
+    console.log('wikipedia scraper started');
   } catch (e) {
-    console.error("failed to init service", e);
+    console.error('failed to init service', e);
   }
 })();
