@@ -4,6 +4,7 @@ import Main from "./components/Main";
 import UserContext, { User } from "./context/UserContext";
 import CssBaseline from '@material-ui/core/CssBaseline';
 
+
 function App() {
   const [user, setUser] = useState<User>({});
 

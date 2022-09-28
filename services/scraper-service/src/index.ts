@@ -12,6 +12,16 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { SQS } from "aws-sdk";
 
+var Rollbar = require('rollbar');
+var rollbar = new Rollbar({
+  accessToken: '7e69e2a251d8446f8fb774183ab1a288',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  payload: {
+    code_version: '1.0.0',
+  }
+});
+
 // how many wiki pages to return in each batch (api call)
 const batchSize: number = +process.env.WIKI_SCRAPER_BATCH_SIZE || 3;
 
@@ -87,7 +97,8 @@ const pollWikipediaArticles = async (searchTerm: string): Promise<number> => {
   return continueOffset;
 };
 
-const app = express()
+const app = express();
+app
   .use(cors())
   .use(async (req: Request, res: Response, next: NextFunction) => {
     try {

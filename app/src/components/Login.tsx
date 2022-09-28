@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { User } from "../context/UserContext";
+import logError from "../rollbar";
 
 interface Props {
   setUser: (user: User) => void;
@@ -48,13 +49,18 @@ const Login: React.FC<Props> = ({ setUser }) => {
 
   const handleLogin = async (event: any) => {
     event.preventDefault();
+    // Bugsnag.notify(new Error('Test error'))
+
+    // throw new Error("111")
     const payload = { username: email, password };
     try {
+      logError("test", {})
       const res = await axios.post("http://localhost:8000/user/login", payload);
       setUser({
         token: res.data.token,
       });
     } catch (err) {
+      logError((err as any).message, {})
       setError("login failed, try again");
     }
   };

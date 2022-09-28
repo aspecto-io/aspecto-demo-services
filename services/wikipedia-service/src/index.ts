@@ -7,6 +7,7 @@ initAspecto({
   packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
   otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
   customZipkinEndpoint: process.env.OTEL_EXPORTER_ZIPKIN_ENDPOINT,
+  // writeSystemLogs: true
 });
 import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
@@ -16,6 +17,16 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import axios from "axios";
 import Redis from "ioredis";
+
+var Rollbar = require('rollbar');
+var rollbar = new Rollbar({
+  accessToken: '7e69e2a251d8446f8fb774183ab1a288',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  payload: {
+    code_version: '1.0.0',
+  }
+});
 
 const sqs = new SQS({
   endpoint: "http://localstack:4566",
