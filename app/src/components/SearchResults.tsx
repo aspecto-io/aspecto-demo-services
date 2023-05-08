@@ -89,7 +89,7 @@ const SearchResults = () => {
         fetchSelectedArticle(user.token!, selectedArticleId, setSelectedArticle);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

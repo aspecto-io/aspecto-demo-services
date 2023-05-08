@@ -1,14 +1,44 @@
-import initAspecto from "@aspecto/opentelemetry";
-initAspecto({
-  aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== 'production',
-  logger: console,
-  packageName: `wikipedia-service(${process.env.MODE.toLowerCase()})`,
-  otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
-  customZipkinEndpoint: process.env.OTEL_EXPORTER_ZIPKIN_ENDPOINT,
-  // writeSystemLogs: true
+const Sentry = require("@sentry/node");
+const {
+  SentrySpanProcessor,
+  SentryPropagator,
+} = require("@sentry/opentelemetry-node");
+// import { ProfilingIntegration } from "@sentry/profiling-node";
+
+const opentelemetry = require("@opentelemetry/sdk-node");
+const otelApi = require("@opentelemetry/api");
+const {
+  getNodeAutoInstrumentations,
+} = require("@opentelemetry/auto-instrumentations-node");
+const {
+  OTLPTraceExporter,
+} = require("@opentelemetry/exporter-trace-otlp-grpc");
+
+// Make sure to call `Sentry.init` BEFORE initializing the OpenTelemetry SDK
+Sentry.init({
+  dsn: "https://4d10ceef9ebb4b42a22a2a7cc4636448@o33832.ingest.sentry.io/74396",
+  tracesSampleRate: 1.0,
+  // set the instrumenter to use OpenTelemetry instead of Sentry
+  instrumenter: "otel",
+  // profilesSampleRate: 1.0, // Profiling sample rate is relative to tracesSampleRate
+  // integrations: [
+  //   // Add profiling integration to list of integrations
+  //   new ProfilingIntegration(),
+  // ],
+  // ...
 });
+
+const sdk = new opentelemetry.NodeSDK({
+  // Existing config
+  traceExporter: new OTLPTraceExporter(),
+  instrumentations: [getNodeAutoInstrumentations()],
+
+  // Sentry config
+  spanProcessor: new SentrySpanProcessor(),
+  textMapPropagator: new SentryPropagator(),
+});
+
+sdk.start();
 import { SQS } from "aws-sdk";
 import { Consumer } from "sqs-consumer";
 import mongoose from "mongoose";
@@ -123,11 +153,14 @@ articlesRouter.post("/:id/rating", async (req, res) => {
       return;
     }
     await ArticleModel.updateOne({ _id: articleId }, { rating });
+    throw new Error("Failed to update item rating");
+
     await redis.del(articleId);
     res.sendStatus(200);
   } catch (err) {
     console.error("failed to set rating for article", { articleId });
     res.sendStatus(500);
+    throw err;
   }
 });
 

@@ -1,12 +1,44 @@
-import init from "@aspecto/opentelemetry";
-init({
-  aspectoAuth:
-    process.env.ASPECTO_AUTH ?? "e97d7a26-db48-4afd-bba2-be4d453047eb",
-  local: process.env.NODE_ENV !== "production",
-  logger: console,
-  otCollectorEndpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
-  customZipkinEndpoint: process.env.OTEL_EXPORTER_ZIPKIN_ENDPOINT,  
+// import { ProfilingIntegration } from '@sentry/profiling-node';
+const Sentry = require("@sentry/node");
+const {
+  SentrySpanProcessor,
+  SentryPropagator,
+} = require("@sentry/opentelemetry-node");
+
+const opentelemetry = require("@opentelemetry/sdk-node");
+const otelApi = require("@opentelemetry/api");
+const {
+  getNodeAutoInstrumentations,
+} = require("@opentelemetry/auto-instrumentations-node");
+const {
+  OTLPTraceExporter,
+} = require("@opentelemetry/exporter-trace-otlp-grpc");
+
+// Make sure to call `Sentry.init` BEFORE initializing the OpenTelemetry SDK
+Sentry.init({
+  dsn: "https://4d10ceef9ebb4b42a22a2a7cc4636448@o33832.ingest.sentry.io/74396",
+  tracesSampleRate: 1.0,
+  // set the instrumenter to use OpenTelemetry instead of Sentry
+  instrumenter: "otel",
+  // profilesSampleRate: 1.0, // Profiling sample rate is relative to tracesSampleRate
+  // integrations: [
+  //   // Add profiling integration to list of integrations
+  //   new ProfilingIntegration(),
+  // ],
+  // ...
 });
+
+const sdk = new opentelemetry.NodeSDK({
+  // Existing config
+  traceExporter: new OTLPTraceExporter(),
+  instrumentations: [getNodeAutoInstrumentations()],
+
+  // Sentry config
+  spanProcessor: new SentrySpanProcessor(),
+  textMapPropagator: new SentryPropagator(),
+});
+
+sdk.start();
 
 import { trace , context} from '@opentelemetry/api';
 
